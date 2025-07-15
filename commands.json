@@ -13,5 +13,10 @@
   "humaans": "https://app.humaans.io/home",
 
   "gl": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link",
-  "glossary": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link"
+  "glossary": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link",
+
+  "hb": "https://app-eu1.hubspot.com/search/144759091/search?query={query}",
+  "hubspot": "https://app-eu1.hubspot.com/search/144759091/search?query={query}",
+
+  "mbexp": "https://fyxer-ai.metabaseapp.com/dashboard/67-exp"
 }
