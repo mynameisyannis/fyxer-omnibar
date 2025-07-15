@@ -1,6 +1,7 @@
 {
-  "stripe": "https://dashboard.stripe.com/search?query={query}",
-  "int": "https://app.intercom.com/a/search?q={query}",
-  "rt": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email={query}",
-  "hm": "https://app.humaans.io/people?search={query}"
+  "st": "https://dashboard.stripe.com/search?query={query}",
+  "in": "https://app.intercom.com/a/search?q={query}",
+  "rte": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email={query}",
+  "hm": "https://app.humaans.io/people?search={query}",
+  "glossary": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link"
 }
