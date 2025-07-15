@@ -1,22 +1,32 @@
 {
+  //Stripe shorthand
   "st": "https://dashboard.stripe.com/search?query={query}",
   "stripe": "https://dashboard.stripe.com/search?query={query}",
 
-  "int": "https://app.intercom.com/a/search?q={query}",
-  "ic": "https://app.intercom.com/a/search?q={query}",
+  //Intercom shorthand
+  "ic": "https://app.intercom.com/a/inbox/wrbnh3r4", //Intercom Support inbox
+  "icu": "https://app.intercom.com/a/apps/wrbnh3r4/users/segments/all-users?searchTerm={query}", //Intercom user search
   "intercom": "https://app.intercom.com/a/search?q={query}",
 
+  //Retool shorthand
   "rte": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email={query}",
   "retoolemail": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email=query}",
 
+  //Humaans shorthand
   "hm": "https://app.humaans.io/home",
   "humaans": "https://app.humaans.io/home",
 
-  "gl": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link",
-  "glossary": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link",
-
+  //Hubspot shorthand
   "hb": "https://app-eu1.hubspot.com/search/144759091/search?query={query}",
   "hubspot": "https://app-eu1.hubspot.com/search/144759091/search?query={query}",
 
+  //Notion pages
+  "gl": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link",
+  "glossary": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link",
+  "cs": "https://www.notion.so/fyxerai/216244dd6755804097a3e65abf83a9d6?v=216244dd6755803d8e4c000cb0aec908&source=copy_link"
+  "cus": "https://www.notion.so/fyxerai/1f4244dd6755807590a0cc2b20bdc430?v=1f4244dd675581f0b0a3000c1ca9a8a5&source=copy_link",
+  "sp": "https://www.notion.so/fyxerai/Fyxer-AE-Playbook-22b244dd6755807883b9ce4b755e8d43?source=copy_link",
+  
+  //Metabase dashes
   "mbexp": "https://fyxer-ai.metabaseapp.com/dashboard/67-exp"
 }
