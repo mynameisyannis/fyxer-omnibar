@@ -2,8 +2,8 @@
   "st": "https://dashboard.stripe.com/search?query={query}",
   "stripe": "https://dashboard.stripe.com/search?query={query}",
 
-  "ic": "https://app.intercom.com/a/inbox/wrbnh3r4", //Intercom Support inbox
-  "icu": "https://app.intercom.com/a/apps/wrbnh3r4/users/segments/all-users?searchTerm={query}", //Intercom user search
+  "ic": "https://app.intercom.com/a/inbox/wrbnh3r4",
+  "icu": "https://app.intercom.com/a/apps/wrbnh3r4/users/segments/all-users?searchTerm={query}", 
   "intercom": "https://app.intercom.com/a/search?q={query}",
 
   "rte": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email={query}",
