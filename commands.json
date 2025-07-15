@@ -1,0 +1,6 @@
+{
+  "stripe": "https://dashboard.stripe.com/search?query={query}",
+  "int": "https://app.intercom.com/a/search?q={query}",
+  "rt": "https://retool.com/apps/{query}",
+  "hm": "https://app.humaans.io/people?search={query}"
+}
