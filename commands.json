@@ -8,6 +8,7 @@
 
   "rte": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email={query}",
   "retoolemail": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email=query}",
+  "rt": "https://fyxer.retool.com/",
 
   "hm": "https://app.humaans.io/home",
   "humaans": "https://app.humaans.io/home",
