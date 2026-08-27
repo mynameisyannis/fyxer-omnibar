@@ -122,7 +122,7 @@
         score = Math.max(score, 86);
       } else if (tokenLc.startsWith(aliasLc) && tokenLc.length - aliasLc.length <= 2) {
         score = Math.max(score, 70);
-      } else if (aliasLc.includes(tokenLc)) {
+      } else if (tokenLc.length >= 3 && aliasLc.includes(tokenLc)) {
         score = Math.max(score, 58);
       }
     }
@@ -130,9 +130,9 @@
     const titleLc = command.title.toLowerCase();
     if (titleLc === rawLc) score = Math.max(score, 96);
     if (titleLc.startsWith(rawLc)) score = Math.max(score, 78);
-    if (titleLc.includes(rawLc)) score = Math.max(score, 48);
+    if (rawLc.length >= 3 && titleLc.includes(rawLc)) score = Math.max(score, 48);
     if (command.category.toLowerCase().startsWith(tokenLc)) score = Math.max(score, 32);
-    if (haystack(command).includes(rawLc)) score = Math.max(score, 28);
+    if (rawLc.length >= 3 && haystack(command).includes(rawLc)) score = Math.max(score, 28);
 
     if (looksLikeEmail(raw) && commandAcceptsQuery(command)) {
       query = raw;

@@ -38,6 +38,11 @@ const hubspot = Omnibar.searchCommands(catalog.commands, "hubspot acme")[0];
 assert.equal(hubspot.command.id, "hubspot");
 assert.equal(hubspot.query, "acme");
 
+const stMatches = Omnibar.searchCommands(catalog.commands, "st").map((item) => item.command.id);
+assert.equal(stMatches[0], "stripe");
+assert.ok(!stMatches.includes("customers"));
+assert.ok(!stMatches.includes("customer-success"));
+
 const empty = Omnibar.searchCommands(catalog.commands, "");
 assert.equal(empty.length, catalog.commands.length);
 assert.equal(empty[0].command.id, "user-360");
