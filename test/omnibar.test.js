@@ -152,14 +152,162 @@ assert.equal(Omnibar.dispatch(catalog, "ic").command.id, "intercom-inbox");
 
 assert.equal(Omnibar.searchEngineUrl("https://example.com/fyxer-omnibar"), "https://example.com/fyxer-omnibar/?q=%s");
 assert.equal(Omnibar.classifyQuery("help st").kind, "help");
+assert.equal(Omnibar.classifyQuery("list").kind, "list");
+assert.equal(Omnibar.classifyQuery("ls").kind, "list");
+assert.equal(Omnibar.classifyQuery("cmds").kind, "list");
+assert.equal(Omnibar.classifyQuery("commands").kind, "list");
+assert.equal(Omnibar.classifyQuery("?").kind, "list");
+assert.equal(Omnibar.classifyQuery("list st").kind, "help");
+assert.equal(Omnibar.classifyQuery("commands st").kind, "help");
 assert.equal(Omnibar.shouldFastRedirect("st jane"), true);
+assert.equal(Omnibar.shouldFastRedirect("u jane@acme.com"), true);
+assert.equal(Omnibar.shouldFastRedirect("asdfasdf"), true);
 assert.equal(Omnibar.shouldFastRedirect("list"), false);
 assert.equal(Omnibar.shouldFastRedirect("help st"), false);
+assert.equal(Omnibar.shouldFastRedirect("commands foo"), false);
+assert.equal(Omnibar.shouldFastRedirect("palette"), false);
 assert.equal(Omnibar.shouldFastRedirect(""), false);
+
+assert.equal(Omnibar.dispatch(catalog, "ls").type, "list");
+assert.equal(Omnibar.dispatch(catalog, "cmds").type, "list");
+assert.equal(Omnibar.dispatch(catalog, "commands").type, "list");
+assert.equal(Omnibar.dispatch(catalog, "list st").type, "help");
+assert.equal(Omnibar.dispatch(catalog, "list st").command.id, "stripe");
+assert.equal(Omnibar.dispatch(catalog, "help not-a-real-command-xyz").type, "help");
+assert.equal(Omnibar.dispatch(catalog, "help not-a-real-command-xyz").command, null);
+
+assert.equal(Omnibar.dispatch(catalog, "mb").urls[0], "https://fyxer-ai.metabaseapp.com/");
+assert.ok(Omnibar.dispatch(catalog, "mb usage").urls[0].includes("search?q=usage"));
+assert.ok(Omnibar.dispatch(catalog, "rte").urls[0].includes("manage-user"));
+assert.ok(!Omnibar.dispatch(catalog, "rte").urls[0].includes("{query}"));
+assert.ok(Omnibar.dispatch(catalog, "rte a@b.c").urls[0].includes("email=a%40b.c"));
+assert.ok(Omnibar.dispatch(catalog, "who").urls[0].includes("intercom.com"));
+assert.equal(Omnibar.dispatch(catalog, "who").command.id, "intercom-user");
+assert.notEqual(Omnibar.dispatch(catalog, "who").command.id, "user-360");
+assert.equal(Omnibar.dispatch(catalog, "who jane@x.com").command.id, "intercom-user");
+
+const user360 = byId["user-360"];
+assert.equal(user360.needsQuery, true);
+assert.equal(user360.home, "");
+assert.deepEqual(Omnibar.buildUrls(user360, ""), []);
+assert.equal(Omnibar.dispatch(catalog, "u").type, "needs-query");
+assert.equal(Omnibar.dispatch(catalog, "u").urls.length, 0);
+assert.equal(Omnibar.dispatch(catalog, "user").type, "needs-query");
+const u360 = Omnibar.dispatch(catalog, "u jane@acme.com");
+assert.equal(u360.type, "redirect");
+assert.equal(u360.urls.length, 5);
+assert.ok(u360.urls.every((url) => url.includes("jane%40acme.com")));
+assert.ok(u360.urls.some((url) => url.includes("intercom.com")));
+assert.ok(u360.urls.some((url) => url.includes("retool.com") && url.includes("email=")));
+assert.ok(u360.urls.some((url) => url.includes("stripe.com")));
+assert.ok(u360.urls.some((url) => url.includes("hubspot.com")));
+assert.ok(u360.urls.some((url) => url.includes("metabaseapp.com")));
+assert.equal(
+  u360.urls.find((url) => url.includes("retool.com")),
+  byId["retool-user"].urls[0].split("{query}").join("jane%40acme.com")
+);
+assert.doesNotMatch(JSON.stringify(catalog.commands), /email=query\}/);
+
+assert.equal(Omnibar.dispatch(catalog, "zz").type, "fallback");
+assert.equal(Omnibar.dispatch(catalog, "s").type, "fallback");
+assert.ok(Omnibar.dispatch(catalog, "s").urls[0].includes("google.com/search?q=s"));
+assert.equal(Omnibar.encodeQuery("jane@acme.com"), "jane%40acme.com");
+assert.equal(Omnibar.encodeQuery("a+b"), "a%2Bb");
+
+const hel = Omnibar.dispatch(catalog, "hel");
+assert.equal(hel.type, "list");
+assert.equal(hel.didYouMean.command.id, "help");
+
+const listTypo = Omnibar.dispatch(catalog, "listt");
+assert.equal(listTypo.type, "list");
+assert.equal(listTypo.didYouMean.command.id, "list");
+const listTypoHelp = Omnibar.dispatch(catalog, "listt st");
+assert.equal(listTypoHelp.type, "help");
+assert.equal(listTypoHelp.command.id, "stripe");
+
+const lst = Omnibar.dispatch(catalog, "lst");
+assert.equal(lst.type, "fallback");
+assert.ok(lst.suggestions.some((item) => item.command.id === "list"));
+assert.ok(lst.suggestions.some((item) => item.command.id === "stripe"));
+
+const tiny = Omnibar.parseCatalog({
+  version: 2,
+  fallback: "g",
+  commands: [
+    {
+      id: "a",
+      aliases: ["foo"],
+      title: "Alpha",
+      url: "https://a.example/q={query}",
+      home: "https://a.example/"
+    },
+    {
+      id: "b",
+      aliases: ["foe"],
+      title: "Beta",
+      url: "https://b.example/q={query}",
+      home: "https://b.example/"
+    },
+    {
+      id: "g",
+      aliases: ["g"],
+      title: "Google",
+      url: "https://www.google.com/search?q={query}"
+    }
+  ]
+});
+const ambiguous = Omnibar.dispatch(tiny, "fop");
+assert.equal(ambiguous.type, "fallback");
+assert.ok(ambiguous.suggestions.length >= 2);
+const uniqueTypo = Omnibar.dispatch(tiny, "fooo");
+assert.equal(uniqueTypo.command.id, "a");
+assert.equal(uniqueTypo.didYouMean.alias, "foo");
+
+assert.equal(Omnibar.shouldStayOnLauncher([{}, {}]), false);
+assert.equal(Omnibar.shouldStayOnLauncher([{}, null]), true);
+assert.equal(Omnibar.shouldStayOnLauncher([{ closed: true }]), true);
+assert.equal(Omnibar.shouldStayOnLauncher([]), false);
+assert.equal(Omnibar.shouldStayOnLauncher([true, false]), true);
 
 const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
 assert.match(html, /\?q=/);
 assert.match(html, /dispatching/);
 assert.match(html, /redirect\.js/);
+assert.match(html, /html\.dispatching body \{ visibility: hidden/);
+assert.ok(html.indexOf('classList.add("dispatching")') < html.indexOf("omnibar.js"));
+assert.match(html, /class="page list-mode"/);
+assert.match(html, /listTokens/);
+
+const ui = fs.readFileSync(path.join(__dirname, "..", "ui.js"), "utf8");
+assert.match(ui, /open-all-tabs/);
+assert.match(ui, /shouldStayOnLauncher/);
+assert.doesNotMatch(ui, /window\.open\(url, "_blank", "noopener"\);\s*\n\s*window\.location\.replace/);
+
+const redirect = fs.readFileSync(path.join(__dirname, "..", "redirect.js"), "utf8");
+assert.match(redirect, /urls\.length === 1/);
+
+const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "manifest.json"), "utf8"));
+assert.equal(manifest.manifest_version, 3);
+assert.equal(manifest.omnibox.keyword, "fx");
+assert.equal(manifest.background.service_worker, "background.js");
+assert.ok(manifest.action.default_popup);
+assert.ok(manifest.icons["16"]);
+assert.ok(manifest.icons["128"]);
+for (const size of [16, 32, 48, 128]) {
+  const icon = path.join(__dirname, "..", "icons", `icon${size}.png`);
+  assert.ok(fs.existsSync(icon), `missing icon${size}.png`);
+  assert.ok(fs.statSync(icon).size > 50, `icon${size}.png looks empty`);
+}
+
+const popup = fs.readFileSync(path.join(__dirname, "..", "popup.html"), "utf8");
+assert.match(popup, /omnibar\.js/);
+assert.match(popup, /ui\.js/);
+assert.match(popup, /class="popup"/);
+
+const background = fs.readFileSync(path.join(__dirname, "..", "background.js"), "utf8");
+assert.match(background, /importScripts\("omnibar\.js"\)/);
+assert.match(background, /Omnibar\.dispatch/);
+assert.match(background, /onInputEntered/);
+assert.match(background, /Command list/);
 
 console.log(`ok - ${catalog.commands.length} commands`);

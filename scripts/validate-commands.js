@@ -22,6 +22,24 @@ if (fallback && !fallback.urls.some((url) => url.includes("{query}"))) {
   errors.push(`fallback command ${fallback.id} must have a {query} url`);
 }
 
+const user360 = catalog.commands.find((command) => command.id === "user-360");
+if (!user360) {
+  errors.push("missing user-360 command");
+} else {
+  if (!user360.needsQuery) errors.push("user-360 must require a query");
+  if (user360.home) errors.push("user-360 must not have a home url");
+  if (user360.urls.length !== 5) {
+    errors.push(`user-360 should open 5 tabs, found ${user360.urls.length}`);
+  }
+  const blob = user360.urls.join("\n");
+  for (const host of ["intercom.com", "retool.com", "stripe.com", "hubspot.com", "metabaseapp.com"]) {
+    if (!blob.includes(host)) errors.push(`user-360 is missing ${host}`);
+  }
+  if (user360.urls.some((url) => !url.includes("{query}"))) {
+    errors.push("user-360 urls must include {query}");
+  }
+}
+
 for (const command of catalog.commands) {
   if (ids.has(command.id)) errors.push(`Duplicate command id: ${command.id}`);
   ids.add(command.id);

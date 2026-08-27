@@ -51,6 +51,28 @@
     return `${chrome.runtime.getURL("index.html")}?q=${encodeURIComponent(query || "list")}`;
   }
 
+  function setChromeIntro(visible) {
+    const intro = document.querySelector("body.page > p.lede");
+    if (intro) intro.hidden = !visible;
+  }
+
+  function openBlankWindow(url) {
+    const win = window.open(url, "_blank");
+    if (win) {
+      try {
+        win.opener = null;
+      } catch (error) {
+        /* ignore */
+      }
+    }
+    return win;
+  }
+
+  function navigateTo(url, replace) {
+    if (replace) window.location.replace(url);
+    else window.location.assign(url);
+  }
+
   async function openUrls(urls, { newWindow, replace } = {}) {
     if (!urls.length) return;
 
@@ -61,20 +83,19 @@
       return;
     }
 
-    urls.slice(1).forEach((url) => window.open(url, "_blank", "noopener"));
-    if (urls.length === 1 && !newWindow) {
-      if (replace) window.location.replace(urls[0]);
-      else window.location.assign(urls[0]);
+    if (newWindow) {
+      urls.forEach((url) => openBlankWindow(url));
       return;
     }
 
-    if (newWindow) {
-      window.open(urls[0], "_blank", "noopener");
-    } else if (replace) {
-      window.location.replace(urls[0]);
-    } else {
-      window.location.assign(urls[0]);
+    if (urls.length === 1) {
+      navigateTo(urls[0], replace);
+      return;
     }
+
+    const extras = urls.slice(1).map((url) => openBlankWindow(url));
+    if (Omnibar.shouldStayOnLauncher(extras)) return;
+    window.setTimeout(() => navigateTo(urls[0], replace), 0);
   }
 
   function searchEngineTemplate(catalog) {
@@ -385,11 +406,21 @@
       return;
     }
     const urls = Omnibar.buildUrls(selected.command, selected.query);
+    if (!isExtension() && urls.length > 1 && !newWindow) {
+      startLauncher(state.catalog, {
+        type: "redirect",
+        command: selected.command,
+        query: selected.query,
+        urls
+      });
+      return;
+    }
     await openUrls(urls, { newWindow });
   }
 
   function startPalette(catalog, prefill, autoGo) {
     document.documentElement.classList.remove("dispatching");
+    setChromeIntro(false);
     const els = mountPalette();
     const keyword = document.querySelector(".keyword-pill");
     if (keyword) keyword.textContent = catalog.keyword || "fx";
@@ -458,24 +489,40 @@
   function startLauncher(catalog, result) {
     document.documentElement.classList.remove("dispatching");
     document.body.classList.add("list-mode");
+    setChromeIntro(true);
     const app = document.getElementById("app");
     const command = result.command;
     const links = result.urls
       .map(
-        (url, index) =>
-          `<li><a href="${escapeHtml(url)}" target="${index === 0 ? "_self" : "_blank"}" rel="noopener">${escapeHtml(url)}</a></li>`
+        (url) =>
+          `<li><a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(url)}</a></li>`
       )
       .join("");
     app.innerHTML = `
       <section class="list-page launcher">
         <h1>${escapeHtml(command.title)}</h1>
-        <p class="lede">Opening ${result.urls.length} tabs for <code>${escapeHtml(result.query || "")}</code>. If pop-ups were blocked, use the links.</p>
+        <p class="lede">
+          Opening ${result.urls.length} tabs for <code>${escapeHtml(result.query || "")}</code>.
+          If the browser blocked pop-ups, use <strong>Open all tabs</strong> or the links.
+        </p>
+        <p class="help-actions">
+          <button type="button" class="btn" id="open-all-tabs">Open all tabs</button>
+          <a class="btn btn-quiet" href="?q=list">All commands</a>
+        </p>
         <ol class="launch-links">${links}</ol>
-        <p class="help-actions"><a class="btn btn-quiet" href="?q=list">All commands</a></p>
       </section>
     `;
-    result.urls.slice(1).forEach((url) => window.open(url, "_blank", "noopener"));
-    window.location.replace(result.urls[0]);
+    const openAll = () => {
+      result.urls.forEach((url) => openBlankWindow(url));
+    };
+    const openAllBtn = document.getElementById("open-all-tabs");
+    if (openAllBtn) openAllBtn.addEventListener("click", openAll);
+
+    const extras = result.urls.slice(1).map((url) => openBlankWindow(url));
+    if (Omnibar.shouldStayOnLauncher(extras)) return;
+    window.setTimeout(() => {
+      window.location.replace(result.urls[0]);
+    }, 0);
   }
 
   async function applyDispatch(catalog, result, { replace, newWindow } = {}) {
@@ -510,6 +557,7 @@
 
   function startList(catalog, result) {
     document.documentElement.classList.remove("dispatching");
+    setChromeIntro(true);
     const els = mountList();
     const filter =
       result && result.type === "help"

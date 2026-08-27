@@ -16,7 +16,7 @@
         var token = raw.split(/\s+/)[0].toLowerCase();
         var rest = raw.slice(token.length).trim();
         var listTokens = { list: 1, ls: 1, cmds: 1, commands: 1, help: 1 };
-        var isHelp = (token === "help" || token === "?" || token === "list" || token === "ls" || token === "cmds") && rest;
+        var isHelp = (token === "?" || listTokens[token]) && rest;
         var isList = !raw || (token === "?" && !rest) || (listTokens[token] && !rest);
         var shouldRedirect = Boolean(present && raw && !palette && !isHelp && !isList && token !== "palette");
         if (shouldRedirect) document.documentElement.classList.add("dispatching");
@@ -43,7 +43,7 @@
     <script src="omnibar.js"></script>
     <script src="redirect.js"></script>
   </head>
-  <body class="page">
+  <body class="page list-mode">
     <noscript>
       This dispatcher needs JavaScript (GitHub Pages cannot send an HTTP 302, so
       <code>?q=</code> is handled in the browser).

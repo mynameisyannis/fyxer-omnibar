@@ -423,13 +423,32 @@
     if (uniqueBest) {
       const guessed = uniqueBest.command;
       if (guessed.action === "list") {
-        return { type: "list", input: raw, query: rest, urls: [], suggestions, didYouMean: uniqueBest };
+        if (rest) {
+          const help = helpResult(catalog, rest, raw);
+          help.didYouMean = uniqueBest;
+          help.suggestions = suggestions;
+          return help;
+        }
+        return { type: "list", input: raw, query: "", urls: [], suggestions, didYouMean: uniqueBest };
       }
       if (guessed.action === "help") {
+        if (!rest) {
+          return { type: "list", input: raw, query: "", urls: [], suggestions, didYouMean: uniqueBest };
+        }
         const help = helpResult(catalog, rest, raw);
         help.didYouMean = uniqueBest;
         help.suggestions = suggestions;
         return help;
+      }
+      if (guessed.action === "palette") {
+        return {
+          type: "palette",
+          input: raw,
+          query: rest,
+          urls: [],
+          suggestions,
+          didYouMean: uniqueBest
+        };
       }
       if (guessed.needsQuery && !rest) {
         return {
@@ -495,6 +514,11 @@
     return `${root}?q=${encodeURIComponent(q)}`;
   }
 
+  function shouldStayOnLauncher(openedExtras) {
+    if (!Array.isArray(openedExtras) || !openedExtras.length) return false;
+    return openedExtras.some((opened) => !opened || opened.closed === true);
+  }
+
   return {
     looksLikeEmail,
     splitInput,
@@ -515,6 +539,7 @@
     groupCommands,
     searchEngineUrl,
     listPageUrl,
+    shouldStayOnLauncher,
     LIST_TOKENS,
     HELP_TOKENS
   };

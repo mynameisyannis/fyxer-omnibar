@@ -38,31 +38,52 @@ chrome.omnibox.onInputStarted.addListener(() => {
 });
 
 chrome.omnibox.onInputChanged.addListener((text, suggest) => {
-  loadCatalog().then((catalog) => {
-    const matches = Omnibar.searchCommands(catalog.commands, text, 6);
-    if (!matches.length) {
-      const suggestions = Omnibar.didYouMean(catalog.commands, Omnibar.splitInput(text).token);
-      const hint = suggestions.length
-        ? `Did you mean <match>${escapeXml(suggestions[0].alias)}</match>? Otherwise Google.`
-        : `Search Google for <match>${escapeXml(text)}</match>`;
-      chrome.omnibox.setDefaultSuggestion({ description: hint });
-      suggest(
-        suggestions.slice(0, 3).map((item) => ({
-          content: text.includes(" ")
-            ? `${item.alias} ${Omnibar.splitInput(text).rest}`
-            : item.alias,
-          description: `<match>${escapeXml(item.alias)}</match> ${escapeXml(item.command.title)} <dim>did you mean</dim>`
-        }))
-      );
-      return;
-    }
+  loadCatalog()
+    .then((catalog) => {
+      const trimmed = String(text || "").trim();
+      if (!trimmed) {
+        chrome.omnibox.setDefaultSuggestion({
+          description: "Command list · type a command, or paste an email for User 360"
+        });
+        suggest(
+          catalog.commands.slice(0, 5).map((command) => ({
+            content: command.aliases[0],
+            description: `<match>${escapeXml(command.aliases[0])}</match> ${escapeXml(command.title)} <dim>${escapeXml(command.description)}</dim>`
+          }))
+        );
+        return;
+      }
 
-    const [first, ...rest] = matches;
-    chrome.omnibox.setDefaultSuggestion({
-      description: suggestionFor(first).description
+      const matches = Omnibar.searchCommands(catalog.commands, trimmed, 6);
+      if (!matches.length) {
+        const suggestions = Omnibar.didYouMean(catalog.commands, Omnibar.splitInput(trimmed).token);
+        const hint = suggestions.length
+          ? `Did you mean <match>${escapeXml(suggestions[0].alias)}</match>? Enter uses that if unique, otherwise Google.`
+          : `Search Google for <match>${escapeXml(trimmed)}</match>`;
+        chrome.omnibox.setDefaultSuggestion({ description: hint });
+        suggest(
+          suggestions.slice(0, 3).map((item) => ({
+            content: trimmed.includes(" ")
+              ? `${item.alias} ${Omnibar.splitInput(trimmed).rest}`
+              : item.alias,
+            description: `<match>${escapeXml(item.alias)}</match> ${escapeXml(item.command.title)} <dim>did you mean</dim>`
+          }))
+        );
+        return;
+      }
+
+      const [first, ...rest] = matches;
+      chrome.omnibox.setDefaultSuggestion({
+        description: suggestionFor(first).description
+      });
+      suggest(rest.map(suggestionFor));
+    })
+    .catch(() => {
+      chrome.omnibox.setDefaultSuggestion({
+        description: "Could not load Fyxer commands"
+      });
+      suggest([]);
     });
-    suggest(rest.map(suggestionFor));
-  });
 });
 
 async function openUrl(url, disposition) {
@@ -99,7 +120,7 @@ async function openMatch(result, disposition) {
 }
 
 chrome.omnibox.onInputEntered.addListener((text, disposition) => {
-  loadCatalog().then((catalog) => {
-    return openMatch(Omnibar.dispatch(catalog, text), disposition);
-  });
+  loadCatalog()
+    .then((catalog) => openMatch(Omnibar.dispatch(catalog, text), disposition))
+    .catch(() => {});
 });

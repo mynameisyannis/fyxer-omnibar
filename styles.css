@@ -448,6 +448,11 @@ body.page.list-mode #app {
   font-size: 13px;
 }
 
+button.btn {
+  cursor: pointer;
+  font: inherit;
+}
+
 .btn-quiet {
   background: transparent;
   color: var(--muted);
