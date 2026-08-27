@@ -1,13 +1,10 @@
 (function () {
   const CATEGORY_CLASS = {
     Support: "category-support",
-    Billing: "category-billing",
-    CRM: "category-crm",
-    Docs: "category-docs",
-    Analytics: "category-analytics",
     Product: "category-product",
-    People: "category-people",
-    Internal: "category-internal",
+    Eng: "category-eng",
+    Growth: "category-growth",
+    Infra: "category-infra",
     Search: "category-search",
     Help: "category-help"
   };
@@ -338,7 +335,7 @@
       const typed = input.value.trim();
       results.innerHTML = typed
         ? `<li class="empty"><strong>Search Google</strong> Press Enter to search for <code>${escapeHtml(typed)}</code>. Unknown commands fall back to Google.</li>`
-        : `<li class="empty"><strong>No matching commands</strong> Try <code>u</code>, <code>st</code>, <code>ic</code>, or paste an email.</li>`;
+        : `<li class="empty"><strong>No matching commands</strong> Try <code>u</code>, <code>st</code>, <code>pl</code>, or paste an email.</li>`;
       return;
     }
 

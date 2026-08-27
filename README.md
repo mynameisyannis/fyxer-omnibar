@@ -1,12 +1,14 @@
 # Fyxer Omnibar
 
-Internal [bunnylol](https://github.com/ccheever/bunny1)-style dispatcher: Intercom, Retool, Stripe, HubSpot, Metabase, Notion.
+Internal [bunnylol](https://github.com/ccheever/bunny1)-style dispatcher for the Fyxer support stack: Plain, Parahelp, Notion, Slack, Fyxer admin, Linear, GitHub, Stripe, HubSpot, PostHog, GrowthBook, GCP, Cursor, Claude.
 
 Type in Chrome’s **address bar**. First token is the command, the rest is the argument. Unknown input falls back to Google.
 
 ```text
 b st jane@acme.com     → Stripe search
-b u jane@acme.com      → User 360 (5 tabs)
+b u jane@acme.com      → User 360 (Stripe + HubSpot)
+b pl                   → Plain
+b lin                  → Linear
 b list                 → command list
 b help st              → docs for the Stripe command (not the Help Center)
 b hc                   → support.fyxer.com
@@ -76,9 +78,11 @@ Toolbar icon still opens the palette. Chrome may bind **Ctrl+Shift+K** / **⌘�
 
 ## User 360 and popup blockers
 
-`u jane@acme.com` opens five tabs: Intercom, Retool, Stripe, HubSpot, Metabase.
+`u jane@acme.com` opens **two** tabs: Stripe search and HubSpot search (EU portal `144759091`).
 
-- **`b` on GitHub Pages / localhost:** the first tab redirects; the other four are `window.open`. Chrome often blocks them. If so, use the fallback links on the hop page, or allow pop-ups for the omnibar origin, or use the extension.
+Plain and PostHog are **not** in User 360. Plain has no public email-search URL without a workspace id. PostHog person search needs a project id. Do not guess those.
+
+- **`b` on GitHub Pages / localhost:** the first tab redirects; the extra tab is `window.open`. Chrome often blocks it. If so, use the fallback links on the hop page, or allow pop-ups for the omnibar origin, or use the extension.
 - **`fx` extension:** extra tabs use `chrome.tabs.create`, so they usually all open.
 
 ## Naming traps
@@ -86,31 +90,38 @@ Toolbar icon still opens the palette. Chrome may bind **Ctrl+Shift+K** / **⌘�
 | You want | Type | Trap |
 | --- | --- | --- |
 | Docs for a command | `help st` | `help` is dispatcher help, **not** the Help Center |
-| Help Center | `hc` or `helpcenter` | |
-| Customer Success Notion DB | `cs` | Title was **guessed** from a title-less Notion URL — confirm it is the right DB |
-| Customers Notion DB | `cus` | Same: title was guessed |
-| AE playbook | `sp` | Not `playbook` / `sales` |
+| Help Center | `hc` or `helpcenter` | Not a primary tool — public docs only |
+| Fyxer dashboard / admin | `admin` / `fyxer` / `app` | Admin settings live in the left nav after sign-in |
+| AE playbook | `sp` or `playbook` | Notion page, not Linear |
+| Linear | `lin` | Opens `linear.app` until we have a workspace slug |
 
 Paste a bare email and User 360 is selected. `b list` is the full catalog.
 
-## Commands support actually uses
+## Commands
 
-| Alias | Opens |
-| --- | --- |
-| `u` / `user` | User 360 (needs an email) |
-| `ic` | Intercom inbox |
-| `icu` / `who` / `whois` | Intercom user search |
-| `rte` | Retool user by email (no query → manage-user app) |
-| `st` | Stripe home, or search with a query |
-| `hs` | HubSpot home, or CRM search |
-| `stats` | Metabase user stats (needs an email) |
-| `hc` / `helpcenter` | Fyxer Help Center |
-| `cs` | Customer Success Notion DB (title guessed) |
-| `cus` | Customers Notion DB (title guessed) |
-| `sp` | AE playbook |
-| `app` | Fyxer dashboard |
-| `status` | status.fyxer.com |
-| `g` / `google` | Google (also the unknown-command fallback) |
+| Alias | App | Opens |
+| --- | --- | --- |
+| `u` / `user` | User 360 | Stripe + HubSpot for an email |
+| `pl` / `plain` | Plain | `app.plain.com` (in-app search) |
+| `para` / `parahelp` | Parahelp | `app.parahelp.com` |
+| `sl` / `slack` | Slack | `app.slack.com` (no workspace id) |
+| `st` / `stripe` | Stripe | Dashboard home, or search with a query |
+| `admin` / `fyxer` / `app` | Fyxer admin | `app.fyxer.com` |
+| `nt` / `notion` | Notion | `notion.so/fyxerai` |
+| `gl` / `glossary` | Notion | Fyxer AI glossary |
+| `sp` / `playbook` | Notion | AE playbook |
+| `lin` / `linear` | Linear | `linear.app` (no team slug) |
+| `gh` / `github` | GitHub | Search, or `github.com/Fyxer-AI` with no query |
+| `hs` / `hubspot` | HubSpot | EU portal home, or CRM search |
+| `po` / `posthog` | PostHog | `app.posthog.com` (no project id) |
+| `gb` / `growthbook` | GrowthBook | `app.growthbook.io` |
+| `gcp` / `gcloud` | GCP | `console.cloud.google.com` |
+| `cur` / `cursor` | Cursor | `cursor.com/dashboard` |
+| `cl` / `claude` | Claude | `claude.ai` |
+| `g` / `google` | Google | Also the unknown-command fallback |
+| `hc` / `helpcenter` | Help Center | `support.fyxer.com` (optional, not in the daily stack) |
+
+URLs that still need a slug from Yannis (home is used until then): Linear workspace, Slack workspace, PostHog project, GCP project, Plain workspace. Prefer a working home URL over a broken deep link.
 
 ## If a URL is wrong
 
@@ -130,7 +141,7 @@ Edit `commands.json`, keep aliases unique, send a PR.
   "aliases": ["st", "stripe"],
   "title": "Stripe",
   "description": "Search customers, payments, and subscriptions",
-  "category": "Billing",
+  "category": "Support",
   "url": "https://dashboard.stripe.com/search?query={query}",
   "home": "https://dashboard.stripe.com/",
   "example": "st jane@acme.com"
@@ -146,7 +157,7 @@ Edit `commands.json`, keep aliases unique, send a PR.
 
 ## Public repo / internal IDs
 
-This GitHub repo is **public**. Command URLs already include Intercom, HubSpot, and Retool workspace IDs. That is a launch risk (they are in git history), not a reason to paste those IDs into Slack or this README. Prefer a private repo when you can. Do not add more IDs to docs.
+This GitHub repo is **public**. Command URLs include the HubSpot portal id and the Notion workspace slug. That is a launch risk (they are in git history), not a reason to paste those IDs into Slack or this README. Prefer a private repo when you can. Do not add more IDs to docs.
 
 ## Why `b` is a short hop, not an instant redirect
 

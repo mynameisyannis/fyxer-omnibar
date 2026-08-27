@@ -14,13 +14,14 @@ Do this **before** asking support to add keyword `b`. Suggested Slack text lives
 
 - [ ] `b list` — catalog, including a `?q=%s` snippet (not `&go=1`)
 - [ ] `b help st` — Stripe command docs, **not** the Help Center
-- [ ] `b hc` — support.fyxer.com
-- [ ] `b u <your fyxer email>` — User 360; extra tabs are often popup-blocked on the web hop. Extension (`fx`) is the reliable 5-tab path.
-- [ ] `b cs`, `b cus`, `b sp` — confirm Notion targets. `cs` / `cus` titles were guessed; `sp` is the AE playbook.
+- [ ] `b pl` — app.plain.com
+- [ ] `b lin` — linear.app
+- [ ] `b u <your fyxer email>` — User 360 (Stripe + HubSpot). Extra tabs are often popup-blocked on the web hop. Extension (`fx`) is the reliable 2-tab path.
+- [ ] Optional: send Linear workspace slug, Slack workspace, PostHog project, GCP project, Plain workspace so those commands can grow search URLs.
 
 ## Nits (do not block a small `fx` / localhost pilot)
 
 - Unpacked extension is a fallback, not the company-wide path
-- Repo is public and already contains internal app IDs — do not paste those IDs in Slack
+- Repo is public and already contains a HubSpot portal id and Notion workspace slug — do not paste those IDs in Slack
 - Making the repo private is a follow-up, not an emergency scramble
-- Confirm `cs` / `cus` in Notion when someone has a minute
+- `hc` is the public Help Center, not part of the daily app stack

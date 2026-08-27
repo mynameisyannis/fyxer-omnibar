@@ -12,13 +12,10 @@
   const ACTIONS = new Set(["list", "help", "palette"]);
   const CATEGORY_ORDER = [
     "Support",
-    "Billing",
-    "CRM",
-    "Analytics",
-    "Docs",
     "Product",
-    "People",
-    "Internal",
+    "Eng",
+    "Growth",
+    "Infra",
     "Search",
     "Help"
   ];
