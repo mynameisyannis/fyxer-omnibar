@@ -78,22 +78,22 @@
   }
 
   function searchEngineTemplate(catalog) {
-    if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.getURL) {
-      return `${chrome.runtime.getURL("index.html")}?q=%s`;
-    }
-    const local = Omnibar.searchEngineUrl(localBaseUrl());
     const published = catalog.publicBaseUrl
       ? Omnibar.searchEngineUrl(catalog.publicBaseUrl)
-      : "";
+      : "https://mynameisyannis.github.io/fyxer-omnibar/?q=%s";
+    const httpPage =
+      window.location.protocol === "http:" || window.location.protocol === "https:";
+    const local = httpPage
+      ? Omnibar.searchEngineUrl(localBaseUrl())
+      : "http://localhost:4173/?q=%s";
     return { local, published };
   }
 
   function setupHtml(catalog) {
     const keyword = catalog.searchEngineKeyword || "b";
     const templates = searchEngineTemplate(catalog);
-    const published =
-      typeof templates === "string" ? templates : templates.published;
-    const local = typeof templates === "string" ? templates : templates.local;
+    const published = templates.published;
+    const local = templates.local;
     return `
       <div class="setup">
         <p>
