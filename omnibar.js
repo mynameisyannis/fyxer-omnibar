@@ -476,8 +476,13 @@
   }
 
   function filterCommands(commands, text) {
-    const needle = String(text || "").trim().toLowerCase();
-    if (!needle) return commands.slice();
+    const raw = String(text || "").trim();
+    if (!raw) return commands.slice();
+    if (looksLikeEmail(raw)) {
+      const boosted = searchCommands(commands, raw);
+      return boosted.length ? boosted.map((item) => item.command) : commands.filter((command) => commandAcceptsQuery(command));
+    }
+    const needle = raw.toLowerCase();
     const { token } = splitInput(needle);
     return commands.filter((command) => {
       const hay = haystack(command);

@@ -228,7 +228,7 @@
         <div id="notice"></div>
         <div class="list-filter-wrap">
           <input id="omnibar-input" type="search" autocomplete="off" spellcheck="false"
-            placeholder="Filter or type a command and press Enter — st jane@acme.com" aria-label="Filter commands" />
+            placeholder="Filter, paste an email, or type st jane@acme.com and press Enter" aria-label="Filter commands" />
         </div>
         <div id="help"></div>
         <div id="groups"></div>
@@ -261,6 +261,8 @@
       els.notice.innerHTML = `<div class="notice">${escapeHtml(result.command.title)} needs a query. Try <code>${escapeHtml(Omnibar.exampleFor(result.command))}</code>.</div>`;
     } else if (result && result.didYouMean && result.type !== "help") {
       els.notice.innerHTML = `<div class="notice">Did you mean <code>${escapeHtml(result.didYouMean.alias)}</code>?</div>`;
+    } else if (filter && Omnibar.looksLikeEmail(filter)) {
+      els.notice.innerHTML = `<div class="notice">Enter opens User 360 for <code>${escapeHtml(filter.trim())}</code>.</div>`;
     } else {
       els.notice.innerHTML = "";
     }

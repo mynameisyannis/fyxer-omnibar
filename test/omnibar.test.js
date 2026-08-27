@@ -91,6 +91,11 @@ assert.equal(
 );
 
 assert.equal(Omnibar.dispatch(catalog, "").type, "list");
+assert.equal(Omnibar.shouldFastRedirect(""), false);
+assert.equal(Omnibar.shouldFastRedirect("list"), false);
+assert.equal(Omnibar.shouldFastRedirect("help"), false);
+assert.equal(Omnibar.shouldFastRedirect("st"), true);
+assert.equal(Omnibar.filterCommands(catalog.commands, "jane@fyxer.com")[0].id, "user-360");
 assert.equal(Omnibar.dispatch(catalog, "list").type, "list");
 assert.equal(Omnibar.dispatch(catalog, "help").type, "list");
 assert.equal(Omnibar.dispatch(catalog, "?").type, "list");
