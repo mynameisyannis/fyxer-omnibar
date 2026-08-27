@@ -1,27 +1,208 @@
 {
-  "st": "https://dashboard.stripe.com/search?query={query}",
-  "stripe": "https://dashboard.stripe.com/search?query={query}",
-
-  "ic": "https://app.intercom.com/a/inbox/wrbnh3r4",
-  "icu": "https://app.intercom.com/a/apps/wrbnh3r4/users/segments/all-users?searchTerm={query}", 
-  "intercom": "https://app.intercom.com/a/search?q={query}",
-
-  "rte": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email={query}",
-  "retoolemail": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email=query}",
-  "rt": "https://fyxer.retool.com/",
-
-  "hm": "https://app.humaans.io/home",
-  "humaans": "https://app.humaans.io/home",
-
-  "hs": "https://app-eu1.hubspot.com/search/144759091/search?query={query}",
-  "hubspot": "https://app-eu1.hubspot.com/search/144759091/search?query={query}",
-
-  "gl": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link",
-  "glossary": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link",
-  "cs": "https://www.notion.so/fyxerai/216244dd6755804097a3e65abf83a9d6?v=216244dd6755803d8e4c000cb0aec908&source=copy_link",
-  "cus": "https://www.notion.so/fyxerai/1f4244dd6755807590a0cc2b20bdc430?v=1f4244dd675581f0b0a3000c1ca9a8a5&source=copy_link",
-  "sp": "https://www.notion.so/fyxerai/Fyxer-AE-Playbook-22b244dd6755807883b9ce4b755e8d43?source=copy_link",
-  
-  "mbexp": "https://fyxer-ai.metabaseapp.com/dashboard/67-exp",
-  "stats": "https://fyxer-ai.metabaseapp.com/question/603-user-stats?email={query}"
+  "version": 2,
+  "name": "Fyxer Omnibar",
+  "omniboxKeyword": "fx",
+  "commands": [
+    {
+      "id": "user-360",
+      "aliases": ["u", "user"],
+      "title": "User 360",
+      "description": "Open Intercom, Retool, Stripe, HubSpot, and Metabase for an email",
+      "category": "Support",
+      "keywords": ["email", "lookup", "customer", "360"],
+      "urls": [
+        "https://app.intercom.com/a/apps/wrbnh3r4/users/segments/all-users?searchTerm={query}",
+        "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email={query}",
+        "https://dashboard.stripe.com/search?query={query}",
+        "https://app-eu1.hubspot.com/search/144759091/search?query={query}",
+        "https://fyxer-ai.metabaseapp.com/question/603-user-stats?email={query}"
+      ]
+    },
+    {
+      "id": "intercom-inbox",
+      "aliases": ["ic"],
+      "title": "Intercom inbox",
+      "description": "Open the Fyxer support inbox",
+      "category": "Support",
+      "keywords": ["inbox", "tickets", "conversations"],
+      "url": "https://app.intercom.com/a/inbox/wrbnh3r4"
+    },
+    {
+      "id": "intercom-user",
+      "aliases": ["icu"],
+      "title": "Intercom user",
+      "description": "Search Intercom users by email or name",
+      "category": "Support",
+      "keywords": ["contact", "people"],
+      "url": "https://app.intercom.com/a/apps/wrbnh3r4/users/segments/all-users?searchTerm={query}"
+    },
+    {
+      "id": "intercom-search",
+      "aliases": ["intercom"],
+      "title": "Intercom search",
+      "description": "Search conversations, users, and articles",
+      "category": "Support",
+      "url": "https://app.intercom.com/a/search?q={query}"
+    },
+    {
+      "id": "retool-user",
+      "aliases": ["rte", "retoolemail"],
+      "title": "Retool user",
+      "description": "Open Manage Orgs and Users by email",
+      "category": "Support",
+      "keywords": ["admin", "orgs", "internal"],
+      "url": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email={query}"
+    },
+    {
+      "id": "retool-home",
+      "aliases": ["rt"],
+      "title": "Retool",
+      "description": "Open the Fyxer Retool workspace",
+      "category": "Internal",
+      "url": "https://fyxer.retool.com/"
+    },
+    {
+      "id": "stripe",
+      "aliases": ["st", "stripe"],
+      "title": "Stripe",
+      "description": "Search customers, payments, and subscriptions",
+      "category": "Billing",
+      "keywords": ["invoice", "payment", "billing", "customer"],
+      "url": "https://dashboard.stripe.com/search?query={query}"
+    },
+    {
+      "id": "hubspot",
+      "aliases": ["hs", "hubspot"],
+      "title": "HubSpot",
+      "description": "Search CRM contacts, companies, and deals",
+      "category": "CRM",
+      "keywords": ["crm", "deal", "contact"],
+      "url": "https://app-eu1.hubspot.com/search/144759091/search?query={query}"
+    },
+    {
+      "id": "metabase-stats",
+      "aliases": ["stats"],
+      "title": "User stats",
+      "description": "Open the Metabase user stats question by email",
+      "category": "Analytics",
+      "keywords": ["metabase", "usage"],
+      "url": "https://fyxer-ai.metabaseapp.com/question/603-user-stats?email={query}"
+    },
+    {
+      "id": "metabase-exp",
+      "aliases": ["mbexp"],
+      "title": "Metabase Exp",
+      "description": "Open the Exp dashboard",
+      "category": "Analytics",
+      "url": "https://fyxer-ai.metabaseapp.com/dashboard/67-exp"
+    },
+    {
+      "id": "metabase-home",
+      "aliases": ["mb", "metabase"],
+      "title": "Metabase",
+      "description": "Open the Fyxer Metabase workspace",
+      "category": "Analytics",
+      "url": "https://fyxer-ai.metabaseapp.com/"
+    },
+    {
+      "id": "humaans-home",
+      "aliases": ["hm", "humaans"],
+      "title": "Humaans",
+      "description": "Open the Humaans home page",
+      "category": "People",
+      "url": "https://app.humaans.io/home"
+    },
+    {
+      "id": "humaans-people",
+      "aliases": ["hmp"],
+      "title": "Humaans people",
+      "description": "Search people in Humaans",
+      "category": "People",
+      "url": "https://app.humaans.io/people?search={query}"
+    },
+    {
+      "id": "glossary",
+      "aliases": ["gl", "glossary"],
+      "title": "Glossary",
+      "description": "Open the Fyxer AI glossary in Notion",
+      "category": "Docs",
+      "keywords": ["definitions", "terms"],
+      "url": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link"
+    },
+    {
+      "id": "customer-success",
+      "aliases": ["cs"],
+      "title": "Customer Success",
+      "description": "Open the Customer Success Notion database",
+      "category": "Docs",
+      "url": "https://www.notion.so/fyxerai/216244dd6755804097a3e65abf83a9d6?v=216244dd6755803d8e4c000cb0aec908&source=copy_link"
+    },
+    {
+      "id": "customers",
+      "aliases": ["cus"],
+      "title": "Customers",
+      "description": "Open the Customers Notion database",
+      "category": "Docs",
+      "url": "https://www.notion.so/fyxerai/1f4244dd6755807590a0cc2b20bdc430?v=1f4244dd675581f0b0a3000c1ca9a8a5&source=copy_link"
+    },
+    {
+      "id": "ae-playbook",
+      "aliases": ["sp"],
+      "title": "AE Playbook",
+      "description": "Open the Fyxer AE playbook in Notion",
+      "category": "Docs",
+      "keywords": ["sales", "playbook"],
+      "url": "https://www.notion.so/fyxerai/Fyxer-AE-Playbook-22b244dd6755807883b9ce4b755e8d43?source=copy_link"
+    },
+    {
+      "id": "notion-home",
+      "aliases": ["nt", "notion"],
+      "title": "Notion",
+      "description": "Open the Fyxer Notion workspace",
+      "category": "Docs",
+      "url": "https://www.notion.so/fyxerai"
+    },
+    {
+      "id": "fyxer-app",
+      "aliases": ["app", "fyxer"],
+      "title": "Fyxer app",
+      "description": "Open the Fyxer dashboard",
+      "category": "Product",
+      "url": "https://app.fyxer.com/"
+    },
+    {
+      "id": "help-center",
+      "aliases": ["hc", "help"],
+      "title": "Help Center",
+      "description": "Open the Fyxer Help Center",
+      "category": "Product",
+      "keywords": ["support", "intercom"],
+      "url": "https://support.fyxer.com/"
+    },
+    {
+      "id": "learning-hub",
+      "aliases": ["docs", "learn"],
+      "title": "Learning Hub",
+      "description": "Open Fyxer docs and learning materials",
+      "category": "Product",
+      "url": "https://docs.fyxer.com/"
+    },
+    {
+      "id": "status",
+      "aliases": ["status"],
+      "title": "Status",
+      "description": "Check Fyxer system status",
+      "category": "Product",
+      "keywords": ["outage", "uptime", "incident"],
+      "url": "https://status.fyxer.com/"
+    },
+    {
+      "id": "website",
+      "aliases": ["www", "site"],
+      "title": "fyxer.com",
+      "description": "Open the public marketing site",
+      "category": "Product",
+      "url": "https://www.fyxer.com/"
+    }
+  ]
 }
