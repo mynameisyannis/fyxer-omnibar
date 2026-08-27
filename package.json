@@ -1,0 +1,18 @@
+{
+  "name": "fyxer-omnibar",
+  "version": "1.0.0",
+  "description": "Omnibar shortcut expander: resolves keyword shortcuts from commands.json into destination URLs and serves them as browser-searchable redirects.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "omnibar": "./src/cli.mjs"
+  },
+  "scripts": {
+    "validate": "node src/validate.mjs",
+    "start": "node src/server.mjs",
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
