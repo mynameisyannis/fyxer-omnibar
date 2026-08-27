@@ -195,6 +195,8 @@ body.popup .omnibar {
 .category-product { color: #8ee7d0; background: rgba(142, 231, 208, 0.12); }
 .category-people { color: #f3b3c8; background: rgba(243, 179, 200, 0.12); }
 .category-internal { color: #c4c8d4; background: rgba(196, 200, 212, 0.1); }
+.category-search { color: #9fd0ff; background: rgba(159, 208, 255, 0.12); }
+.category-help { color: #c4c8d4; background: rgba(196, 200, 212, 0.1); }
 
 .empty {
   padding: 36px 16px;
@@ -237,4 +239,242 @@ mark {
   background: transparent;
   color: var(--accent);
   font-weight: 700;
+}
+
+body.page.list-mode {
+  align-items: stretch;
+  padding: 28px 20px 64px;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, rgba(141, 168, 255, 0.1), transparent 55%),
+    var(--bg);
+}
+
+body.page.list-mode .page-brand {
+  width: min(1080px, 100%);
+  margin: 0 auto 10px;
+}
+
+body.page.list-mode #app {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+}
+
+.list-page h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+}
+
+.lede {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.setup {
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.setup p {
+  margin: 0 0 6px;
+}
+
+.setup p:last-child {
+  margin-bottom: 0;
+}
+
+.setup-fields code,
+.setup-note code,
+.lede code,
+.notice code,
+.help-card code,
+.empty-list code {
+  font-size: 12px;
+}
+
+.setup-note {
+  color: var(--faint);
+  font-size: 12px;
+}
+
+.list-filter-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 8px 0 14px;
+  background: linear-gradient(var(--bg) 70%, transparent);
+}
+
+#omnibar-input[type="search"] {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  color: var(--text);
+  font: 500 15px/1.4 var(--sans);
+  padding: 12px 14px;
+  outline: none;
+}
+
+#omnibar-input[type="search"]:focus {
+  box-shadow: var(--ring);
+}
+
+.list-group {
+  margin-bottom: 22px;
+}
+
+.list-group h2 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.list-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.list-table th,
+.list-table td {
+  text-align: left;
+  padding: 8px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.list-table th {
+  font-size: 11px;
+  color: var(--faint);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.list-row {
+  cursor: pointer;
+}
+
+.list-row:hover {
+  background: var(--row-hover);
+}
+
+.list-row:last-child td {
+  border-bottom: 0;
+}
+
+.list-alias {
+  white-space: nowrap;
+  width: 22%;
+  color: var(--accent);
+}
+
+.list-name {
+  width: 24%;
+  font-weight: 600;
+}
+
+.list-doc {
+  color: var(--muted);
+}
+
+.list-example {
+  white-space: nowrap;
+  color: var(--faint);
+  width: 18%;
+}
+
+.help-card,
+.notice,
+.launcher {
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+
+.help-card h2,
+.launcher h1 {
+  margin: 0 0 8px;
+}
+
+.help-card dl {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 6px 12px;
+  margin: 12px 0;
+  font-size: 13px;
+}
+
+.help-card dt {
+  color: var(--faint);
+}
+
+.help-card dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.help-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text);
+  background: var(--accent-soft);
+  border: 1px solid rgba(141, 168, 255, 0.3);
+  border-radius: 8px;
+  padding: 6px 10px;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.btn-quiet {
+  background: transparent;
+  color: var(--muted);
+  border-color: var(--panel-border);
+}
+
+.notice {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.empty-list {
+  color: var(--muted);
+}
+
+.launch-links {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.launch-links a {
+  color: var(--accent);
+}
+
+noscript {
+  display: block;
+  width: min(1080px, 100%);
+  margin: 0 auto 16px;
+  color: var(--muted);
 }

@@ -2,6 +2,9 @@
   "version": 2,
   "name": "Fyxer Omnibar",
   "omniboxKeyword": "fx",
+  "searchEngineKeyword": "b",
+  "fallback": "_default",
+  "publicBaseUrl": "https://mynameisyannis.github.io/fyxer-omnibar/",
   "commands": [
     {
       "id": "user-360",
@@ -10,6 +13,7 @@
       "description": "Open Intercom, Retool, Stripe, HubSpot, and Metabase for an email",
       "category": "Support",
       "keywords": ["email", "lookup", "customer", "360"],
+      "example": "u jane@acme.com",
       "urls": [
         "https://app.intercom.com/a/apps/wrbnh3r4/users/segments/all-users?searchTerm={query}",
         "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email={query}",
@@ -25,16 +29,19 @@
       "description": "Open the Fyxer support inbox",
       "category": "Support",
       "keywords": ["inbox", "tickets", "conversations"],
+      "example": "ic",
       "url": "https://app.intercom.com/a/inbox/wrbnh3r4"
     },
     {
       "id": "intercom-user",
-      "aliases": ["icu"],
+      "aliases": ["icu", "who", "whois"],
       "title": "Intercom user",
       "description": "Search Intercom users by email or name",
       "category": "Support",
-      "keywords": ["contact", "people"],
-      "url": "https://app.intercom.com/a/apps/wrbnh3r4/users/segments/all-users?searchTerm={query}"
+      "keywords": ["contact", "people", "who"],
+      "example": "who jane@acme.com",
+      "url": "https://app.intercom.com/a/apps/wrbnh3r4/users/segments/all-users?searchTerm={query}",
+      "home": "https://app.intercom.com/a/apps/wrbnh3r4/users/segments/all-users"
     },
     {
       "id": "intercom-search",
@@ -42,7 +49,9 @@
       "title": "Intercom search",
       "description": "Search conversations, users, and articles",
       "category": "Support",
-      "url": "https://app.intercom.com/a/search?q={query}"
+      "example": "intercom refund",
+      "url": "https://app.intercom.com/a/search?q={query}",
+      "home": "https://app.intercom.com/a/search"
     },
     {
       "id": "retool-user",
@@ -51,7 +60,9 @@
       "description": "Open Manage Orgs and Users by email",
       "category": "Support",
       "keywords": ["admin", "orgs", "internal"],
-      "url": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email={query}"
+      "example": "rte jane@acme.com",
+      "url": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user?email={query}",
+      "home": "https://fyxer.retool.com/apps/7c286c2c-f85b-11ef-94ad-07413d9068c6/Manage%20Orgs%20and%20Users/manage-user"
     },
     {
       "id": "retool-home",
@@ -59,6 +70,7 @@
       "title": "Retool",
       "description": "Open the Fyxer Retool workspace",
       "category": "Internal",
+      "example": "rt",
       "url": "https://fyxer.retool.com/"
     },
     {
@@ -68,7 +80,9 @@
       "description": "Search customers, payments, and subscriptions",
       "category": "Billing",
       "keywords": ["invoice", "payment", "billing", "customer"],
-      "url": "https://dashboard.stripe.com/search?query={query}"
+      "example": "st jane@acme.com",
+      "url": "https://dashboard.stripe.com/search?query={query}",
+      "home": "https://dashboard.stripe.com/"
     },
     {
       "id": "hubspot",
@@ -77,7 +91,9 @@
       "description": "Search CRM contacts, companies, and deals",
       "category": "CRM",
       "keywords": ["crm", "deal", "contact"],
-      "url": "https://app-eu1.hubspot.com/search/144759091/search?query={query}"
+      "example": "hs acme",
+      "url": "https://app-eu1.hubspot.com/search/144759091/search?query={query}",
+      "home": "https://app-eu1.hubspot.com/"
     },
     {
       "id": "metabase-stats",
@@ -86,6 +102,7 @@
       "description": "Open the Metabase user stats question by email",
       "category": "Analytics",
       "keywords": ["metabase", "usage"],
+      "example": "stats jane@acme.com",
       "url": "https://fyxer-ai.metabaseapp.com/question/603-user-stats?email={query}"
     },
     {
@@ -94,15 +111,18 @@
       "title": "Metabase Exp",
       "description": "Open the Exp dashboard",
       "category": "Analytics",
+      "example": "mbexp",
       "url": "https://fyxer-ai.metabaseapp.com/dashboard/67-exp"
     },
     {
       "id": "metabase-home",
       "aliases": ["mb", "metabase"],
       "title": "Metabase",
-      "description": "Open the Fyxer Metabase workspace",
+      "description": "Open the Fyxer Metabase workspace, or search with a query",
       "category": "Analytics",
-      "url": "https://fyxer-ai.metabaseapp.com/"
+      "example": "mb",
+      "url": "https://fyxer-ai.metabaseapp.com/search?q={query}",
+      "home": "https://fyxer-ai.metabaseapp.com/"
     },
     {
       "id": "humaans-home",
@@ -110,6 +130,7 @@
       "title": "Humaans",
       "description": "Open the Humaans home page",
       "category": "People",
+      "example": "hm",
       "url": "https://app.humaans.io/home"
     },
     {
@@ -118,7 +139,9 @@
       "title": "Humaans people",
       "description": "Search people in Humaans",
       "category": "People",
-      "url": "https://app.humaans.io/people?search={query}"
+      "example": "hmp jane",
+      "url": "https://app.humaans.io/people?search={query}",
+      "home": "https://app.humaans.io/people"
     },
     {
       "id": "glossary",
@@ -127,6 +150,7 @@
       "description": "Open the Fyxer AI glossary in Notion",
       "category": "Docs",
       "keywords": ["definitions", "terms"],
+      "example": "gl",
       "url": "https://www.notion.so/fyxerai/Fyxer-AI-Glossary-1f9244dd675580bca01ddd6952f45e5b?source=copy_link"
     },
     {
@@ -135,6 +159,7 @@
       "title": "Customer Success",
       "description": "Open the Customer Success Notion database",
       "category": "Docs",
+      "example": "cs",
       "url": "https://www.notion.so/fyxerai/216244dd6755804097a3e65abf83a9d6?v=216244dd6755803d8e4c000cb0aec908&source=copy_link"
     },
     {
@@ -143,6 +168,7 @@
       "title": "Customers",
       "description": "Open the Customers Notion database",
       "category": "Docs",
+      "example": "cus",
       "url": "https://www.notion.so/fyxerai/1f4244dd6755807590a0cc2b20bdc430?v=1f4244dd675581f0b0a3000c1ca9a8a5&source=copy_link"
     },
     {
@@ -152,6 +178,7 @@
       "description": "Open the Fyxer AE playbook in Notion",
       "category": "Docs",
       "keywords": ["sales", "playbook"],
+      "example": "sp",
       "url": "https://www.notion.so/fyxerai/Fyxer-AE-Playbook-22b244dd6755807883b9ce4b755e8d43?source=copy_link"
     },
     {
@@ -160,6 +187,7 @@
       "title": "Notion",
       "description": "Open the Fyxer Notion workspace",
       "category": "Docs",
+      "example": "nt",
       "url": "https://www.notion.so/fyxerai"
     },
     {
@@ -168,15 +196,17 @@
       "title": "Fyxer app",
       "description": "Open the Fyxer dashboard",
       "category": "Product",
+      "example": "app",
       "url": "https://app.fyxer.com/"
     },
     {
       "id": "help-center",
-      "aliases": ["hc", "help"],
+      "aliases": ["hc", "helpcenter"],
       "title": "Help Center",
       "description": "Open the Fyxer Help Center",
       "category": "Product",
       "keywords": ["support", "intercom"],
+      "example": "hc",
       "url": "https://support.fyxer.com/"
     },
     {
@@ -185,6 +215,7 @@
       "title": "Learning Hub",
       "description": "Open Fyxer docs and learning materials",
       "category": "Product",
+      "example": "docs",
       "url": "https://docs.fyxer.com/"
     },
     {
@@ -194,6 +225,7 @@
       "description": "Check Fyxer system status",
       "category": "Product",
       "keywords": ["outage", "uptime", "incident"],
+      "example": "status",
       "url": "https://status.fyxer.com/"
     },
     {
@@ -202,7 +234,68 @@
       "title": "fyxer.com",
       "description": "Open the public marketing site",
       "category": "Product",
+      "example": "www",
       "url": "https://www.fyxer.com/"
+    },
+    {
+      "id": "_default",
+      "aliases": ["g", "google"],
+      "title": "Google",
+      "description": "Search Google. Unknown commands fall back here.",
+      "category": "Search",
+      "keywords": ["fallback", "search"],
+      "example": "g fyxer billing",
+      "url": "https://www.google.com/search?q={query}",
+      "home": "https://www.google.com/"
+    },
+    {
+      "id": "gmail",
+      "aliases": ["gm", "gmail"],
+      "title": "Gmail",
+      "description": "Open Gmail, or search mail when you add a query",
+      "category": "Search",
+      "example": "gm from:jane@acme.com",
+      "url": "https://mail.google.com/mail/u/0/#search/{query}",
+      "home": "https://mail.google.com/mail/u/0/"
+    },
+    {
+      "id": "calendar",
+      "aliases": ["cal", "calendar"],
+      "title": "Google Calendar",
+      "description": "Open Google Calendar, or search events",
+      "category": "Search",
+      "example": "cal standup",
+      "url": "https://calendar.google.com/calendar/u/0/r/search?q={query}",
+      "home": "https://calendar.google.com/calendar/u/0/r"
+    },
+    {
+      "id": "list",
+      "aliases": ["list", "ls", "cmds", "?"],
+      "title": "List commands",
+      "description": "Show every command (this page). This is also what empty `b` does.",
+      "category": "Help",
+      "keywords": ["bindings", "catalog", "help"],
+      "example": "list",
+      "action": "list"
+    },
+    {
+      "id": "help",
+      "aliases": ["help"],
+      "title": "Help",
+      "description": "Document one command, e.g. help st",
+      "category": "Help",
+      "keywords": ["docs", "man"],
+      "example": "help st",
+      "action": "help"
+    },
+    {
+      "id": "palette",
+      "aliases": ["palette"],
+      "title": "Command palette",
+      "description": "Open the fuzzy command palette",
+      "category": "Help",
+      "example": "palette",
+      "action": "palette"
     }
   ]
 }

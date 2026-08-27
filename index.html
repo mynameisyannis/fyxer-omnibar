@@ -4,13 +4,52 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Fyxer Omnibar</title>
+    <script>
+      window.__fyxerBoot = (function () {
+        var params = new URLSearchParams(location.search);
+        var hash = new URLSearchParams(location.hash.replace(/^#/, ""));
+        var present = params.has("q") || hash.has("q");
+        var q = present ? (params.get("q") != null ? params.get("q") : hash.get("q")) : "";
+        var palette = params.get("palette") === "1";
+        var go = params.get("go") === "1" || hash.get("go") === "1";
+        var raw = String(q || "").trim();
+        var token = raw.split(/\s+/)[0].toLowerCase();
+        var rest = raw.slice(token.length).trim();
+        var listTokens = { list: 1, ls: 1, cmds: 1, commands: 1, help: 1 };
+        var isHelp = (token === "help" || token === "?" || token === "list" || token === "ls" || token === "cmds") && rest;
+        var isList = !raw || (token === "?" && !rest) || (listTokens[token] && !rest);
+        var shouldRedirect = Boolean(present && raw && !palette && !isHelp && !isList && token !== "palette");
+        if (shouldRedirect) document.documentElement.classList.add("dispatching");
+        window.__fyxerCommandsPromise = fetch(new URL("commands.json", location.href).href).then(function (r) {
+          return r.json();
+        });
+        return { present: present, q: q, palette: palette, go: go, shouldRedirect: shouldRedirect };
+      })();
+    </script>
+    <style>
+      html.dispatching { background: #101114; }
+      html.dispatching::before {
+        content: "Going…";
+        color: #9aa0ae;
+        font: 14px ui-sans-serif, system-ui, sans-serif;
+        display: block;
+        padding: 24px;
+      }
+      html.dispatching body { visibility: hidden !important; }
+    </style>
+    <link rel="preload" href="commands.json" as="fetch" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="icon" href="icons/icon32.png" />
+    <script src="omnibar.js"></script>
+    <script src="redirect.js"></script>
   </head>
   <body class="page">
+    <noscript>
+      This dispatcher needs JavaScript. GitHub Pages cannot send an HTTP 302, so
+      <code>?q=</code> is handled in the browser.
+    </noscript>
     <header class="page-brand">Fyxer Omnibar</header>
     <main id="app"></main>
-    <script src="omnibar.js"></script>
     <script src="ui.js"></script>
   </body>
 </html>

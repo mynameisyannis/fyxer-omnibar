@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Fyxer Omnibar",
-  "version": "2.0.0",
-  "description": "Jump to Stripe, Intercom, Retool, HubSpot, and other Fyxer tools from the address bar.",
+  "version": "2.1.0",
+  "description": "Bunnylol-style dispatcher for Fyxer tools. Type fx in the omnibox, or add a Chrome search engine with keyword b.",
   "omnibox": {
     "keyword": "fx"
   },

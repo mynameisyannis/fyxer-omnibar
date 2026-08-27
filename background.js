@@ -27,9 +27,13 @@ function suggestionFor(match) {
   };
 }
 
+function listUrl(query) {
+  return `${chrome.runtime.getURL("index.html")}?q=${encodeURIComponent(query || "list")}`;
+}
+
 chrome.omnibox.onInputStarted.addListener(() => {
   chrome.omnibox.setDefaultSuggestion({
-    description: "Fyxer command, or paste an email for User 360"
+    description: "Fyxer command, or paste an email for User 360. Unknown text searches Google."
   });
 });
 
@@ -37,10 +41,19 @@ chrome.omnibox.onInputChanged.addListener((text, suggest) => {
   loadCatalog().then((catalog) => {
     const matches = Omnibar.searchCommands(catalog.commands, text, 6);
     if (!matches.length) {
-      chrome.omnibox.setDefaultSuggestion({
-        description: "No matching Fyxer commands"
-      });
-      suggest([]);
+      const suggestions = Omnibar.didYouMean(catalog.commands, Omnibar.splitInput(text).token);
+      const hint = suggestions.length
+        ? `Did you mean <match>${escapeXml(suggestions[0].alias)}</match>? Otherwise Google.`
+        : `Search Google for <match>${escapeXml(text)}</match>`;
+      chrome.omnibox.setDefaultSuggestion({ description: hint });
+      suggest(
+        suggestions.slice(0, 3).map((item) => ({
+          content: text.includes(" ")
+            ? `${item.alias} ${Omnibar.splitInput(text).rest}`
+            : item.alias,
+          description: `<match>${escapeXml(item.alias)}</match> ${escapeXml(item.command.title)} <dim>did you mean</dim>`
+        }))
+      );
       return;
     }
 
@@ -52,31 +65,41 @@ chrome.omnibox.onInputChanged.addListener((text, suggest) => {
   });
 });
 
-async function openMatch(match, disposition) {
-  if (match.command.urls.length > 1 && !match.query) return;
-  const urls = Omnibar.buildUrls(match.command, match.query);
-  const [first, ...rest] = urls;
-
+async function openUrl(url, disposition) {
   if (disposition === "newForegroundTab") {
-    await chrome.tabs.create({ url: first, active: true });
+    await chrome.tabs.create({ url, active: true });
   } else if (disposition === "newBackgroundTab") {
-    await chrome.tabs.create({ url: first, active: false });
+    await chrome.tabs.create({ url, active: false });
   } else {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tab && tab.id != null) {
-      await chrome.tabs.update(tab.id, { url: first });
+      await chrome.tabs.update(tab.id, { url });
     } else {
-      await chrome.tabs.create({ url: first, active: true });
+      await chrome.tabs.create({ url, active: true });
     }
   }
+}
 
-  await Promise.all(rest.map((url) => chrome.tabs.create({ url, active: false })));
+async function openMatch(result, disposition) {
+  if (result.type === "palette") {
+    await openUrl(`${chrome.runtime.getURL("index.html")}?palette=1`, disposition);
+    return;
+  }
+  if (result.type === "list" || result.type === "help" || result.type === "needs-query") {
+    const query =
+      result.type === "needs-query" ? result.command.aliases[0] : result.input || "list";
+    await openUrl(listUrl(query), disposition);
+    return;
+  }
+
+  const urls = result.urls || [];
+  if (!urls.length) return;
+  await openUrl(urls[0], disposition);
+  await Promise.all(urls.slice(1).map((url) => chrome.tabs.create({ url, active: false })));
 }
 
 chrome.omnibox.onInputEntered.addListener((text, disposition) => {
   loadCatalog().then((catalog) => {
-    const match = Omnibar.resolve(catalog.commands, text);
-    if (!match) return;
-    return openMatch(match, disposition);
+    return openMatch(Omnibar.dispatch(catalog, text), disposition);
   });
 });

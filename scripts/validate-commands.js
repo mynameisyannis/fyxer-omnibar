@@ -5,10 +5,22 @@ const path = require("path");
 const Omnibar = require("../omnibar");
 
 const catalogPath = path.join(__dirname, "..", "commands.json");
-const catalog = Omnibar.parseCatalog(JSON.parse(fs.readFileSync(catalogPath, "utf8")));
+const data = JSON.parse(fs.readFileSync(catalogPath, "utf8"));
+const catalog = Omnibar.parseCatalog(data);
 const errors = [];
 const aliases = new Map();
 const ids = new Set();
+const ACTIONS = new Set(["list", "help", "palette"]);
+
+if (!catalog.fallback) errors.push("catalog is missing fallback");
+if (!catalog.commands.some((command) => command.id === catalog.fallback)) {
+  errors.push(`fallback "${catalog.fallback}" does not match a command id`);
+}
+
+const fallback = catalog.commands.find((command) => command.id === catalog.fallback);
+if (fallback && !fallback.urls.some((url) => url.includes("{query}"))) {
+  errors.push(`fallback command ${fallback.id} must have a {query} url`);
+}
 
 for (const command of catalog.commands) {
   if (ids.has(command.id)) errors.push(`Duplicate command id: ${command.id}`);
@@ -17,9 +29,15 @@ for (const command of catalog.commands) {
   if (!command.title.trim()) errors.push(`${command.id} is missing a title`);
   if (!command.category.trim()) errors.push(`${command.id} is missing a category`);
   if (!command.aliases.length) errors.push(`${command.id} has no aliases`);
+  if (command.action && !ACTIONS.has(command.action)) {
+    errors.push(`${command.id} has unknown action ${command.action}`);
+  }
+  if (!command.action && !command.urls.length) {
+    errors.push(`${command.id} is missing a url`);
+  }
 
   for (const alias of command.aliases) {
-    if (!/^[a-z0-9-]+$/i.test(alias)) {
+    if (alias !== "?" && !/^[a-z0-9-]+$/i.test(alias)) {
       errors.push(`Alias "${alias}" on ${command.id} should be letters, numbers, or dashes`);
     }
     const owner = aliases.get(alias.toLowerCase());
@@ -29,7 +47,8 @@ for (const command of catalog.commands) {
     aliases.set(alias.toLowerCase(), command.id);
   }
 
-  for (const url of command.urls) {
+  const urls = [...command.urls, command.home].filter(Boolean);
+  for (const url of urls) {
     if (!/^https:\/\//.test(url)) errors.push(`${command.id} url is not https: ${url}`);
     if ((url.match(/{/g) || []).length !== (url.match(/}/g) || []).length) {
       errors.push(`${command.id} has unbalanced { } in ${url}`);
@@ -37,6 +56,12 @@ for (const command of catalog.commands) {
     if (/\{query|query\}/.test(url) && !url.includes("{query}")) {
       errors.push(`${command.id} has a broken query placeholder: ${url}`);
     }
+  }
+}
+
+for (const name of ["list", "help"]) {
+  if (![...aliases.keys()].includes(name)) {
+    errors.push(`catalog should include a "${name}" alias`);
   }
 }
 
