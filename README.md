@@ -1,94 +1,128 @@
 # Fyxer Omnibar
 
-Internal [bunnylol](https://github.com/ccheever/bunny1)-style dispatcher for the Fyxer tools you already jump between: Intercom, Retool, Stripe, HubSpot, Metabase, and Notion.
+Internal [bunnylol](https://github.com/ccheever/bunny1)-style dispatcher: Intercom, Retool, Stripe, HubSpot, Metabase, Notion.
 
-This is a command dispatcher, not only a command palette. First token is the command, the rest is the argument. Unknown input falls back to Google.
+Type in Chrome’s **address bar**. First token is the command, the rest is the argument. Unknown input falls back to Google.
 
 ```text
 b st jane@acme.com     → Stripe search
-b st                   → Stripe dashboard home
 b u jane@acme.com      → User 360 (5 tabs)
-b list                 → this command list
-b help st              → docs for Stripe
-b g fyxer billing      → Google
-b asdfasdf             → Google fallback
+b list                 → command list
+b help st              → docs for the Stripe command (not the Help Center)
+b hc                   → support.fyxer.com
+b asdfasdf             → Google
 ```
 
-## Chrome search engine (primary)
+## Add to Chrome (~2 minutes)
 
-This is the bunnylol UX: type in the regular address bar, never open a palette.
+Keyword **`b`** is a Chrome **site search** shortcut. It is not the extension (that one is **`fx`**).
 
-1. Enable GitHub Pages on this repo (**Settings → Pages → Deploy from branch**, folder `/ (root)`), **or** run a local server (below).
-2. Chrome → **Settings → Search engine → Manage search engines and site search → Add**
-3. Fill in:
+### 1. Check the hosted URL
 
-| Field | Value |
+Open [https://mynameisyannis.github.io/fyxer-omnibar/](https://mynameisyannis.github.io/fyxer-omnibar/)
+
+| What you see | What to do |
+| --- | --- |
+| Command list | Continue — paste the URL below into Chrome. |
+| **404** | **Stop.** GitHub Pages is off or not serving this `index.html`. That is a repo-admin setting (`Settings → Pages → Deploy from branch`, folder `/ (root)`), and Pages usually publishes **`main`**. Today `main` is only `commands.json`, so Pages must be enabled **and** this dispatcher must be merged (or Pages pointed at a branch that has `index.html`). You cannot fix this from Chrome. Use [localhost](#until-pages-is-live) or the [extension](#chrome-extension-keyword-fx) until then. |
+
+Do not add the github.io search engine while it 404s — every `b` query will 404 too.
+
+### 2. Add site search (do not replace Google)
+
+1. Open `chrome://settings/searchEngines`
+2. Scroll to **Site search** → **Add** (leave Google as the default search engine)
+
+| Field | Copy exactly |
 | --- | --- |
 | Name | `Fyxer` |
 | Shortcut / keyword | `b` |
 | URL | `https://mynameisyannis.github.io/fyxer-omnibar/?q=%s` |
 
-Local equivalent:
+`%s` is required. **`?q=` is enough — do not add `&go=1`.**
 
-```text
-http://localhost:4173/?q=%s
-```
+### 3. Try it
 
-4. In the address bar type `b` then Tab or Space, then a command (`st jane@acme.com`) and Enter.
+Address bar → `b` → Tab or Space → `list` → Enter.
 
-`?q=` dispatches immediately. You do **not** need `&go=1`. Empty `b`, `list`, `help`, and `?` open the command list.
+Empty `b`, `list`, `help`, and `?` open this command list.
 
-### GitHub Pages limitation
+## Until Pages is live
 
-Pages is static hosting. It cannot send an HTTP 302 the way Meta’s bunny1 server does. The page loads `commands.json` and then `location.replace`s. A tiny boot script hides the UI first so the palette does not flash. Expect a short hop, not a zero-latency redirect.
-
-## Chrome extension
-
-1. Open `chrome://extensions`
-2. Enable **Developer mode**
-3. Click **Load unpacked** and select this repo folder
-4. In the address bar, type `fx` then Tab or Space
-5. Try `u jane@acme.com`, `st jane@acme.com`, `list`, or a typo (falls back to Google)
-
-The toolbar icon still opens the fuzzy palette. Chrome may bind **Ctrl+Shift+K** / **⌘⇧K**; change it in `chrome://extensions/shortcuts`. User 360’s extra tabs are more reliable from the extension than from the search-engine hop (popup blockers).
-
-## Local web list
+Needs the repo on disk:
 
 ```bash
 python3 -m http.server 4173
 ```
 
-Then open [http://localhost:4173](http://localhost:4173). That page **is** the command list (`list`). `http://localhost:4173/?q=st%20jane@acme.com` redirects. `?palette=1` opens the old fuzzy palette.
+Then add a **second** site-search engine (or only this one, for a local pilot):
 
-## Commands
+| Field | Value |
+| --- | --- |
+| Name | `Fyxer local` |
+| Shortcut | `b` (or `bl` if `b` is taken) |
+| URL | `http://localhost:4173/?q=%s` |
+
+Same rule: `?q=%s` only, no `&go=1`. Open [http://localhost:4173](http://localhost:4173) — that page **is** `list`. `?palette=1` is the old fuzzy palette.
+
+## Chrome extension (keyword `fx`)
+
+Use this for a personal pilot, and for **User 360**, which is more reliable here than on the web hop.
+
+1. `chrome://extensions` → **Developer mode** → **Load unpacked** → this repo folder
+2. Address bar → `fx` → Tab or Space → `list` or `u jane@acme.com`
+
+Toolbar icon still opens the palette. Chrome may bind **Ctrl+Shift+K** / **⌘⇧K**; change it in `chrome://extensions/shortcuts`.
+
+## User 360 and popup blockers
+
+`u jane@acme.com` opens five tabs: Intercom, Retool, Stripe, HubSpot, Metabase.
+
+- **`b` on GitHub Pages / localhost:** the first tab redirects; the other four are `window.open`. Chrome often blocks them. If so, use the fallback links on the hop page, or allow pop-ups for the omnibar origin, or use the extension.
+- **`fx` extension:** extra tabs use `chrome.tabs.create`, so they usually all open.
+
+## Naming traps
+
+| You want | Type | Trap |
+| --- | --- | --- |
+| Docs for a command | `help st` | `help` is dispatcher help, **not** the Help Center |
+| Help Center | `hc` or `helpcenter` | |
+| Customer Success Notion DB | `cs` | Title was **guessed** from a title-less Notion URL — confirm it is the right DB |
+| Customers Notion DB | `cus` | Same: title was guessed |
+| AE playbook | `sp` | Not `playbook` / `sales` |
+
+Paste a bare email and User 360 is selected. `b list` is the full catalog.
+
+## Commands support actually uses
 
 | Alias | Opens |
 | --- | --- |
-| `u` / `user` | User 360: Intercom, Retool, Stripe, HubSpot, Metabase (needs an email) |
+| `u` / `user` | User 360 (needs an email) |
 | `ic` | Intercom inbox |
 | `icu` / `who` / `whois` | Intercom user search |
-| `rte` | Retool user by email (no query → the manage-user app) |
-| `st` | Stripe home, or Stripe search with a query |
-| `hs` | HubSpot home, or CRM search with a query |
+| `rte` | Retool user by email (no query → manage-user app) |
+| `st` | Stripe home, or search with a query |
+| `hs` | HubSpot home, or CRM search |
 | `stats` | Metabase user stats (needs an email) |
-| `g` / `google` | Google (also the unknown-command fallback) |
-| `gm` / `gmail` | Gmail home / search |
-| `cal` | Google Calendar |
-| `list` / `ls` / `?` | Command list |
-| `help st` | Document one command |
 | `hc` / `helpcenter` | Fyxer Help Center |
-| `gl` | Notion glossary |
-| `cs` | Customer Success Notion DB |
-| `cus` | Customers Notion DB |
+| `cs` | Customer Success Notion DB (title guessed) |
+| `cus` | Customers Notion DB (title guessed) |
 | `sp` | AE playbook |
 | `app` | Fyxer dashboard |
 | `status` | status.fyxer.com |
+| `g` / `google` | Google (also the unknown-command fallback) |
 
-Paste an email with no command and User 360 is selected. `help` is the dispatcher help command; use `hc` for support.fyxer.com.
+## If a URL is wrong
+
+1. `b help <alias>` shows the destination (or open `list` and read the row).
+2. Change `commands.json` and open a PR, or ping the person who can merge this repo.
+3. Keyword `b` reads `commands.json` **from GitHub Pages**. A merge does not update `b` until Pages is serving the new file (hard-refresh if it looks stale). Local `b` / unpacked `fx` update as soon as the file on disk does.
+
+The list lives in `commands.json` in this repo. There is no separate Fyxer owner yet — whoever can merge here owns the shortcuts.
 
 ## Add a command
 
-Edit `commands.json` and send a PR. A command looks like this:
+Edit `commands.json`, keep aliases unique, send a PR.
 
 ```json
 {
@@ -103,9 +137,17 @@ Edit `commands.json` and send a PR. A command looks like this:
 }
 ```
 
-- `{query}` is replaced with `encodeURIComponent` of the argument.
-- `home` / `noQueryUrl` is used when the command is invoked with no argument (`st` vs `st jane@acme.com`).
+- `{query}` is replaced with the URL-encoded argument.
+- `home` is used when there is no argument (`st` vs `st jane@acme.com`).
 - Built-ins `list`, `help`, and `palette` use `"action"` instead of a URL.
 - Unknown input uses the command whose id is `fallback` (`_default` → Google).
 
-Keep aliases unique. `node scripts/validate-commands.js` checks that, plus broken `{query}` placeholders. `node test/omnibar.test.js` covers dispatch, fallback, help/list, and home vs search URLs.
+`node scripts/validate-commands.js` checks unique aliases and broken `{query}` placeholders.
+
+## Public repo / internal IDs
+
+This GitHub repo is **public**. Command URLs already include Intercom, HubSpot, and Retool workspace IDs. That is a launch risk (they are in git history), not a reason to paste those IDs into Slack or this README. Prefer a private repo when you can. Do not add more IDs to docs.
+
+## Why `b` is a short hop, not an instant redirect
+
+GitHub Pages is static. It cannot send an HTTP 302 the way Meta’s bunny1 server does. The page loads `commands.json` and then `location.replace`s. Expect a brief “Going…” hop, not a zero-latency redirect.

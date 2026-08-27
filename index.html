@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Fyxer Omnibar</title>
+    <title>Fyxer Omnibar — keyword b (search engine) or fx (extension)</title>
     <script>
       window.__fyxerBoot = (function () {
         var params = new URLSearchParams(location.search);
@@ -45,11 +45,49 @@
   </head>
   <body class="page">
     <noscript>
-      This dispatcher needs JavaScript. GitHub Pages cannot send an HTTP 302, so
-      <code>?q=</code> is handled in the browser.
+      This dispatcher needs JavaScript (GitHub Pages cannot send an HTTP 302, so
+      <code>?q=</code> is handled in the browser).
+      Chrome site search: name <code>Fyxer</code>, keyword <code>b</code>, URL
+      <code>https://mynameisyannis.github.io/fyxer-omnibar/?q=%s</code>
+      (no <code>&amp;go=1</code>). If that URL 404s, Pages is not serving this
+      page yet — use <code>http://localhost:4173/?q=%s</code> or the extension
+      keyword <code>fx</code>. <code>help</code> documents a command; Help Center
+      is <code>hc</code>.
     </noscript>
     <header class="page-brand">Fyxer Omnibar</header>
-    <main id="app"></main>
+    <p class="lede" style="width: min(1080px, 100%); margin: 0 auto 16px">
+      <code>help</code> documents a command (<code>help st</code>); Help Center is
+      <code>hc</code>. Keyword <code>b</code> is Chrome site search;
+      the extension is <code>fx</code>. User 360 extra tabs are often
+      popup-blocked on this web hop — use <code>fx</code> or the fallback links.
+    </p>
+    <main id="app">
+      <section class="list-page">
+        <h1>Commands</h1>
+        <p class="lede">
+          First token is the command, the rest is the argument.
+          Empty <code>b</code>, <code>list</code>, <code>help</code>, or
+          <code>?</code> shows this page.
+        </p>
+        <div class="setup">
+          <p>
+            Chrome site search:
+            <strong>chrome://settings/searchEngines → Site search → Add</strong>
+            (do not replace Google).
+          </p>
+          <p class="setup-fields">
+            Name <code>Fyxer</code>
+            · Keyword <code>b</code>
+            · URL <code>https://mynameisyannis.github.io/fyxer-omnibar/?q=%s</code>
+          </p>
+          <p class="setup-note">
+            <code>?q=%s</code> only — no <code>&amp;go=1</code>.
+            If that URL 404s, Pages is not serving this page yet.
+            Local: <code>http://localhost:4173/?q=%s</code>.
+          </p>
+        </div>
+      </section>
+    </main>
     <script src="ui.js"></script>
   </body>
 </html>
