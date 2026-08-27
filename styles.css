@@ -188,13 +188,10 @@ body.popup .omnibar {
 }
 
 .category-support { color: #9bb4ff; background: rgba(141, 168, 255, 0.12); }
-.category-billing { color: #f3c36b; background: rgba(243, 195, 107, 0.12); }
-.category-crm { color: #f0a07a; background: rgba(240, 160, 122, 0.12); }
-.category-docs { color: #8fd0b0; background: rgba(143, 208, 176, 0.12); }
-.category-analytics { color: #d3a6ff; background: rgba(211, 166, 255, 0.12); }
 .category-product { color: #8ee7d0; background: rgba(142, 231, 208, 0.12); }
-.category-people { color: #f3b3c8; background: rgba(243, 179, 200, 0.12); }
-.category-internal { color: #c4c8d4; background: rgba(196, 200, 212, 0.1); }
+.category-eng { color: #f3c36b; background: rgba(243, 195, 107, 0.12); }
+.category-growth { color: #f0a07a; background: rgba(240, 160, 122, 0.12); }
+.category-infra { color: #d3a6ff; background: rgba(211, 166, 255, 0.12); }
 .category-search { color: #9fd0ff; background: rgba(159, 208, 255, 0.12); }
 .category-help { color: #c4c8d4; background: rgba(196, 200, 212, 0.1); }
 

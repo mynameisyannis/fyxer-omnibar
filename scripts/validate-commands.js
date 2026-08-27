@@ -28,12 +28,17 @@ if (!user360) {
 } else {
   if (!user360.needsQuery) errors.push("user-360 must require a query");
   if (user360.home) errors.push("user-360 must not have a home url");
-  if (user360.urls.length !== 5) {
-    errors.push(`user-360 should open 5 tabs, found ${user360.urls.length}`);
+  if (user360.urls.length !== 2) {
+    errors.push(`user-360 should open 2 tabs, found ${user360.urls.length}`);
   }
   const blob = user360.urls.join("\n");
-  for (const host of ["intercom.com", "retool.com", "stripe.com", "hubspot.com", "metabaseapp.com"]) {
+  for (const host of ["stripe.com", "hubspot.com"]) {
     if (!blob.includes(host)) errors.push(`user-360 is missing ${host}`);
+  }
+  for (const host of ["intercom.com", "retool.com", "metabaseapp.com", "plain.com", "posthog.com"]) {
+    if (blob.includes(host)) {
+      errors.push(`user-360 should not open ${host} (no confirmed email-search URL, or dropped tool)`);
+    }
   }
   if (user360.urls.some((url) => !url.includes("{query}"))) {
     errors.push("user-360 urls must include {query}");
@@ -80,6 +85,13 @@ for (const command of catalog.commands) {
 for (const name of ["list", "help"]) {
   if (![...aliases.keys()].includes(name)) {
     errors.push(`catalog should include a "${name}" alias`);
+  }
+}
+
+const catalogBlob = JSON.stringify(data);
+for (const dropped of ["intercom.com", "retool.com", "metabaseapp.com", "humaans.io"]) {
+  if (catalogBlob.includes(dropped)) {
+    errors.push(`catalog still contains dropped host ${dropped}`);
   }
 }
 

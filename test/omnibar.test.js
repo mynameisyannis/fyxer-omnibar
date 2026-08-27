@@ -16,18 +16,32 @@ assert.ok(catalog.commands.length >= 10);
 
 const byId = Object.fromEntries(catalog.commands.map((command) => [command.id, command]));
 assert.ok(byId["user-360"]);
-assert.equal(byId["user-360"].urls.length, 5);
-assert.equal(byId["retool-user"].urls[0].includes("{query}"), true);
-assert.doesNotMatch(byId["retool-user"].urls[0], /email=query\}/);
+assert.equal(byId["user-360"].urls.length, 2);
+assert.ok(byId.plain);
+assert.ok(byId.parahelp);
+assert.ok(byId.linear);
+assert.ok(byId.github);
+assert.ok(byId.posthog);
+assert.ok(byId.growthbook);
+assert.ok(byId.gcp);
+assert.ok(byId.cursor);
+assert.ok(byId.claude);
+assert.ok(byId.slack);
+assert.ok(byId["fyxer-admin"].aliases.includes("admin"));
+assert.ok(byId["fyxer-admin"].aliases.includes("fyxer"));
+assert.ok(byId["fyxer-admin"].aliases.includes("app"));
 assert.ok(byId.stripe.home.startsWith("https://dashboard.stripe.com"));
 assert.ok(byId._default.urls[0].includes("{query}"));
 assert.ok(byId.list.action === "list");
 assert.ok(byId.help.action === "help");
 assert.ok(byId["help-center"].aliases.includes("hc"));
 assert.ok(!byId["help-center"].aliases.includes("help"));
-assert.ok(byId["intercom-user"].aliases.includes("who"));
-assert.ok(byId.gmail);
-assert.ok(byId.calendar);
+assert.ok(!byId["intercom-user"]);
+assert.ok(!byId["retool-user"]);
+assert.ok(!byId["metabase-home"]);
+assert.ok(!byId["humaans-home"]);
+assert.ok(!byId.gmail);
+assert.ok(!byId.calendar);
 
 const stripe = Omnibar.searchCommands(catalog.commands, "st jane@fyxer.com")[0];
 assert.equal(stripe.command.id, "stripe");
@@ -44,9 +58,9 @@ const userFromEmail = Omnibar.searchCommands(catalog.commands, "jane@fyxer.com")
 assert.equal(userFromEmail.command.id, "user-360");
 assert.equal(userFromEmail.query, "jane@fyxer.com");
 
-const intercomInbox = Omnibar.searchCommands(catalog.commands, "ic")[0];
-assert.equal(intercomInbox.command.id, "intercom-inbox");
-assert.equal(intercomInbox.query, "");
+const plainHome = Omnibar.searchCommands(catalog.commands, "pl")[0];
+assert.equal(plainHome.command.id, "plain");
+assert.equal(plainHome.query, "");
 
 const hubspot = Omnibar.searchCommands(catalog.commands, "hubspot acme")[0];
 assert.equal(hubspot.command.id, "hubspot");
@@ -54,8 +68,7 @@ assert.equal(hubspot.query, "acme");
 
 const stMatches = Omnibar.searchCommands(catalog.commands, "st").map((item) => item.command.id);
 assert.equal(stMatches[0], "stripe");
-assert.ok(!stMatches.includes("customers"));
-assert.ok(!stMatches.includes("customer-success"));
+assert.ok(!stMatches.includes("slack"));
 
 const empty = Omnibar.searchCommands(catalog.commands, "");
 assert.equal(empty.length, catalog.commands.length);
@@ -63,7 +76,7 @@ assert.equal(empty[0].command.id, "user-360");
 
 const v1 = Omnibar.parseCatalog({
   st: "https://dashboard.stripe.com/search?query={query}",
-  ic: "https://app.intercom.com/a/inbox/wrbnh3r4"
+  pl: "https://app.plain.com/"
 });
 assert.equal(v1.version, 1);
 assert.equal(v1.commands.length, 2);
@@ -71,10 +84,10 @@ assert.equal(Omnibar.searchCommands(v1.commands, "st foo")[0].query, "foo");
 
 assert.equal(Omnibar.looksLikeEmail("not-an-email"), false);
 assert.equal(Omnibar.looksLikeEmail("user@fyxer.com"), true);
-assert.deepEqual(Omnibar.splitInput("rte user@fyxer.com"), {
-  token: "rte",
+assert.deepEqual(Omnibar.splitInput("pl user@fyxer.com"), {
+  token: "pl",
   rest: "user@fyxer.com",
-  raw: "rte user@fyxer.com"
+  raw: "pl user@fyxer.com"
 });
 
 assert.equal(Omnibar.dispatch(catalog, "st jane@fyxer.com").type, "redirect");
@@ -84,7 +97,7 @@ assert.equal(
   "https://dashboard.stripe.com/search?query=jane%40fyxer.com"
 );
 assert.equal(Omnibar.dispatch(catalog, "st").urls[0], "https://dashboard.stripe.com/");
-assert.equal(Omnibar.dispatch(catalog, "hs").urls[0], "https://app-eu1.hubspot.com/");
+assert.equal(Omnibar.dispatch(catalog, "hs").urls[0], "https://app-eu1.hubspot.com/contacts/144759091");
 assert.equal(
   Omnibar.dispatch(catalog, "hs acme").urls[0],
   "https://app-eu1.hubspot.com/search/144759091/search?query=acme"
@@ -102,15 +115,14 @@ assert.equal(Omnibar.dispatch(catalog, "?").type, "list");
 assert.equal(Omnibar.dispatch(catalog, "help st").type, "help");
 assert.equal(Omnibar.dispatch(catalog, "help st").command.id, "stripe");
 assert.equal(Omnibar.dispatch(catalog, "help stripe").command.id, "stripe");
-assert.equal(Omnibar.dispatch(catalog, "? ic").type, "help");
-assert.equal(Omnibar.dispatch(catalog, "? ic").command.id, "intercom-inbox");
+assert.equal(Omnibar.dispatch(catalog, "? pl").type, "help");
+assert.equal(Omnibar.dispatch(catalog, "? pl").command.id, "plain");
 assert.equal(Omnibar.dispatch(catalog, "list u").command.id, "user-360");
 
 assert.equal(Omnibar.dispatch(catalog, "u").type, "needs-query");
 assert.equal(Omnibar.dispatch(catalog, "u").command.id, "user-360");
-assert.equal(Omnibar.dispatch(catalog, "u jane@acme.com").urls.length, 5);
+assert.equal(Omnibar.dispatch(catalog, "u jane@acme.com").urls.length, 2);
 assert.equal(Omnibar.dispatch(catalog, "jane@acme.com").command.id, "user-360");
-assert.equal(Omnibar.dispatch(catalog, "stats").type, "needs-query");
 
 const unknown = Omnibar.dispatch(catalog, "zzzz not-a-command");
 assert.equal(unknown.type, "fallback");
@@ -126,13 +138,8 @@ assert.equal(
   "https://www.google.com/search?q=cats"
 );
 assert.equal(Omnibar.dispatch(catalog, "g").urls[0], "https://www.google.com/");
-assert.equal(
-  Omnibar.dispatch(catalog, "gm from:jane").urls[0],
-  "https://mail.google.com/mail/u/0/#search/from%3Ajane"
-);
-assert.equal(Omnibar.dispatch(catalog, "gm").urls[0], "https://mail.google.com/mail/u/0/");
-assert.ok(Omnibar.dispatch(catalog, "cal standup").urls[0].includes("search?q=standup"));
-assert.equal(Omnibar.dispatch(catalog, "who jane@x.com").command.id, "intercom-user");
+assert.equal(Omnibar.dispatch(catalog, "pl").command.id, "plain");
+assert.equal(Omnibar.dispatch(catalog, "pl").urls[0], "https://app.plain.com/");
 assert.equal(Omnibar.dispatch(catalog, "hc").command.id, "help-center");
 assert.equal(Omnibar.dispatch(catalog, "palette").type, "palette");
 
@@ -153,7 +160,7 @@ assert.equal(short.command.id, "stripe");
 assert.equal(short.didYouMean, null);
 
 assert.ok(!Omnibar.dispatch(catalog, "st").suggestions || !Omnibar.dispatch(catalog, "st").didYouMean);
-assert.equal(Omnibar.dispatch(catalog, "ic").command.id, "intercom-inbox");
+assert.equal(Omnibar.dispatch(catalog, "pl").command.id, "plain");
 
 assert.equal(Omnibar.searchEngineUrl("https://example.com/fyxer-omnibar"), "https://example.com/fyxer-omnibar/?q=%s");
 assert.equal(Omnibar.classifyQuery("help st").kind, "help");
@@ -181,15 +188,22 @@ assert.equal(Omnibar.dispatch(catalog, "list st").command.id, "stripe");
 assert.equal(Omnibar.dispatch(catalog, "help not-a-real-command-xyz").type, "help");
 assert.equal(Omnibar.dispatch(catalog, "help not-a-real-command-xyz").command, null);
 
-assert.equal(Omnibar.dispatch(catalog, "mb").urls[0], "https://fyxer-ai.metabaseapp.com/");
-assert.ok(Omnibar.dispatch(catalog, "mb usage").urls[0].includes("search?q=usage"));
-assert.ok(Omnibar.dispatch(catalog, "rte").urls[0].includes("manage-user"));
-assert.ok(!Omnibar.dispatch(catalog, "rte").urls[0].includes("{query}"));
-assert.ok(Omnibar.dispatch(catalog, "rte a@b.c").urls[0].includes("email=a%40b.c"));
-assert.ok(Omnibar.dispatch(catalog, "who").urls[0].includes("intercom.com"));
-assert.equal(Omnibar.dispatch(catalog, "who").command.id, "intercom-user");
-assert.notEqual(Omnibar.dispatch(catalog, "who").command.id, "user-360");
-assert.equal(Omnibar.dispatch(catalog, "who jane@x.com").command.id, "intercom-user");
+assert.equal(Omnibar.dispatch(catalog, "lin").urls[0], "https://linear.app/");
+assert.equal(Omnibar.dispatch(catalog, "gh").urls[0], "https://github.com/Fyxer-AI");
+assert.ok(Omnibar.dispatch(catalog, "gh omnibar").urls[0].includes("github.com/search?q=omnibar"));
+assert.equal(Omnibar.dispatch(catalog, "admin").urls[0], "https://app.fyxer.com/");
+assert.equal(Omnibar.dispatch(catalog, "fyxer").command.id, "fyxer-admin");
+assert.equal(Omnibar.dispatch(catalog, "app").command.id, "fyxer-admin");
+assert.equal(Omnibar.dispatch(catalog, "nt").urls[0], "https://www.notion.so/fyxerai");
+assert.equal(Omnibar.dispatch(catalog, "sl").urls[0], "https://app.slack.com/");
+assert.equal(Omnibar.dispatch(catalog, "para").urls[0], "https://app.parahelp.com/");
+assert.equal(Omnibar.dispatch(catalog, "po").urls[0], "https://app.posthog.com/");
+assert.equal(Omnibar.dispatch(catalog, "gb").urls[0], "https://app.growthbook.io/");
+assert.equal(Omnibar.dispatch(catalog, "gcp").urls[0], "https://console.cloud.google.com/");
+assert.equal(Omnibar.dispatch(catalog, "cur").urls[0], "https://cursor.com/dashboard");
+assert.equal(Omnibar.dispatch(catalog, "cl").urls[0], "https://claude.ai/");
+assert.notEqual(Omnibar.dispatch(catalog, "pl jane@x.com").command.id, "user-360");
+assert.equal(Omnibar.dispatch(catalog, "pl jane@x.com").command.id, "plain");
 
 const user360 = byId["user-360"];
 assert.equal(user360.needsQuery, true);
@@ -200,18 +214,20 @@ assert.equal(Omnibar.dispatch(catalog, "u").urls.length, 0);
 assert.equal(Omnibar.dispatch(catalog, "user").type, "needs-query");
 const u360 = Omnibar.dispatch(catalog, "u jane@acme.com");
 assert.equal(u360.type, "redirect");
-assert.equal(u360.urls.length, 5);
+assert.equal(u360.urls.length, 2);
 assert.ok(u360.urls.every((url) => url.includes("jane%40acme.com")));
-assert.ok(u360.urls.some((url) => url.includes("intercom.com")));
-assert.ok(u360.urls.some((url) => url.includes("retool.com") && url.includes("email=")));
 assert.ok(u360.urls.some((url) => url.includes("stripe.com")));
 assert.ok(u360.urls.some((url) => url.includes("hubspot.com")));
-assert.ok(u360.urls.some((url) => url.includes("metabaseapp.com")));
-assert.equal(
-  u360.urls.find((url) => url.includes("retool.com")),
-  byId["retool-user"].urls[0].split("{query}").join("jane%40acme.com")
-);
+assert.ok(!u360.urls.some((url) => url.includes("intercom.com")));
+assert.ok(!u360.urls.some((url) => url.includes("retool.com")));
+assert.ok(!u360.urls.some((url) => url.includes("metabaseapp.com")));
+assert.ok(!u360.urls.some((url) => url.includes("plain.com")));
+assert.ok(!u360.urls.some((url) => url.includes("posthog.com")));
 assert.doesNotMatch(JSON.stringify(catalog.commands), /email=query\}/);
+assert.doesNotMatch(JSON.stringify(catalog.commands), /intercom\.com/);
+assert.doesNotMatch(JSON.stringify(catalog.commands), /retool\.com/);
+assert.doesNotMatch(JSON.stringify(catalog.commands), /metabaseapp\.com/);
+assert.doesNotMatch(JSON.stringify(catalog.commands), /humaans\.io/);
 
 assert.equal(Omnibar.dispatch(catalog, "zz").type, "fallback");
 assert.equal(Omnibar.dispatch(catalog, "s").type, "fallback");
@@ -314,5 +330,11 @@ assert.match(background, /importScripts\("omnibar\.js"\)/);
 assert.match(background, /Omnibar\.dispatch/);
 assert.match(background, /onInputEntered/);
 assert.match(background, /Command list/);
+
+const grouped = Omnibar.groupCommands(catalog.commands).map((group) => group.category);
+assert.deepEqual(
+  grouped.filter((category) => ["Support", "Product", "Eng", "Growth", "Infra"].includes(category)),
+  ["Support", "Product", "Eng", "Growth", "Infra"]
+);
 
 console.log(`ok - ${catalog.commands.length} commands`);
