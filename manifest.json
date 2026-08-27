@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Fyxer Omnibar",
+  "version": "2.1.0",
+  "description": "Bunnylol-style dispatcher for Fyxer tools. Type fx in the omnibox, or add a Chrome search engine with keyword b.",
+  "omnibox": {
+    "keyword": "fx"
+  },
+  "action": {
+    "default_title": "Fyxer Omnibar",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K"
+      },
+      "description": "Open Fyxer Omnibar"
+    }
+  }
+}
