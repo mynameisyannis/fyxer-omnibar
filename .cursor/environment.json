@@ -1,0 +1,16 @@
+{
+  "name": "fyxer-omnibar",
+  "install": "npm install && npm run validate",
+  "terminals": [
+    {
+      "name": "omnibar",
+      "command": "npm start"
+    }
+  ],
+  "ports": [
+    {
+      "name": "omnibar",
+      "port": 8787
+    }
+  ]
+}
